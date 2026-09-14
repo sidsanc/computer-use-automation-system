@@ -8,10 +8,15 @@ fails to expose: captions in neighbouring cells and bold header rows.
 import itertools
 import re
 import uuid
+from collections.abc import Callable
+from typing import Literal
 
 from playwright.sync_api import ElementHandle, Frame, Page
 from playwright.sync_api import Error as PlaywrightError
+from pydantic import BaseModel
 
+from cua.paths import path_matches
+from cua.schema.conditions import Condition, DialogPresent, ElementPresent, FieldValue, FrameUrl, TextVisible
 from cua.schema.targets import (
     Css,
     LabelNeighbor,
@@ -71,6 +76,13 @@ def _role(ax_node: dict) -> str:
 
 def _norm(text: str) -> str:
     return " ".join(text.split())
+
+
+class ActionInfo(BaseModel):
+    location_url: str
+    control_name: str | None
+    destination_url: str | None
+    destination_method: Literal["GET", "POST"] | None
 
 
 class WebSurface:
@@ -210,6 +222,111 @@ class WebSurface:
         if not kept:
             raise TargetingError(f"could not derive a unique locator for {eid} ({node.role} {node.name!r})")
         return Target(frame_path=node.frame_path, locators=tuple(kept))
+
+
+    # ---- acting ------------------------------------------------------------------------------
+
+    def action_info(self, handle: ElementHandle, kind: str, key: str | None = None) -> ActionInfo:
+        frame = handle.owner_frame()
+        install_helpers(frame)
+        info = handle.evaluate("(el, [kind, key]) => window.__cuaH.actionInfo(el, kind, key)", [kind, key])
+        return ActionInfo(location_url=frame.url, control_name=info["name"] or None,
+                          destination_url=info["url"], destination_method=info["method"])
+
+    def perform(self, kind: str, handle: ElementHandle | None, value: str | None = None, key: str | None = None,
+                timeout_s: float = 10) -> str | None:
+        timeout = timeout_s * 1000
+        match kind:
+            case "click":
+                handle.click(timeout=timeout)
+            case "fill":
+                handle.fill(value or "", timeout=timeout)
+            case "select":
+                handle.select_option(label=value, timeout=timeout)
+            case "press_key":
+                handle.press(key, timeout=timeout)
+            case "extract":
+                return handle.inner_text()
+            case _:
+                raise ValueError(f"surface cannot perform '{kind}'")
+        return None
+
+    # ---- conditions ----------------------------------------------------------------------------
+
+    def check(self, condition: Condition, render: Callable[[str], str], value_of: Callable[[object], str]) -> bool:
+        """Evaluate against the live, untrimmed page. Transient errors (a frame mid-navigation) read as 'not yet'."""
+        try:
+            return self._check(condition, render, value_of)
+        except (PlaywrightError, TargetingError):
+            return False
+
+    def _check(self, condition: Condition, render, value_of) -> bool:
+        match condition:
+            case TextVisible(text=text, frame_path=path, match=mode):
+                frames = [frame_for(self.page, path)] if path is not None else self.page.frames
+                wanted = render(text)
+                for frame in frames:
+                    loc = frame.get_by_text(wanted, exact=mode == "exact")
+                    if any(loc.nth(i).is_visible() for i in range(min(loc.count(), 5))):
+                        return True
+                return False
+            case ElementPresent(target=target):
+                frame = frame_for(self.page, target.frame_path)
+                return any(find(frame, _rendered(c.locator, render)) for c in target.locators)
+            case FieldValue(target=target, equals=expected):
+                handle = self.resolve(render_target(target, render)).handle
+                return handle.input_value() == value_of(expected)
+            case FrameUrl(frame_path=path, path=pattern):
+                return path_matches(render(pattern), frame_for(self.page, path).url)
+            case DialogPresent(name=name):
+                return any(name is None or d == name for _, d in self.dialogs())
+        raise TypeError(f"unsupported condition: {condition!r}")
+
+    def dialogs(self) -> list[tuple[tuple[str, ...], str]]:
+        found = []
+        for frame in self.page.frames:
+            for role in ("dialog", "alertdialog"):
+                loc = frame.get_by_role(role)
+                for i in range(loc.count()):
+                    item = loc.nth(i)
+                    if item.is_visible():
+                        found.append((frame_path(frame), item.get_attribute("aria-label") or ""))
+        return found
+
+    def frame_urls(self) -> dict[str, str]:
+        return {"/".join(frame_path(f)) or "top": f.url for f in self.page.frames}
+
+    def screenshot_masked(self, captions: list[str], values: list[str]) -> tuple[bytes, int]:
+        masked = 0
+        for frame in self.page.frames:
+            try:
+                install_helpers(frame)
+                masked += frame.evaluate("([c, v]) => window.__cuaH.mask(c, v)", [captions, values])
+            except PlaywrightError:
+                continue
+        try:
+            return self.page.screenshot(full_page=True), masked
+        finally:
+            for frame in self.page.frames:
+                try:
+                    frame.evaluate("() => window.__cuaH && window.__cuaH.unmask()")
+                except PlaywrightError:
+                    continue
+
+
+def _rendered(locator: Locator, render: Callable[[str], str]) -> Locator:
+    data = locator.model_dump()
+    rendered = {k: render(v) if isinstance(v, str) else v for k, v in data.items()}
+    if isinstance(data.get("row"), dict):
+        rendered["row"] = {k: render(v) for k, v in data["row"].items()}
+    return type(locator).model_validate(rendered)
+
+
+def render_target(target: Target, render: Callable[[str], str]) -> Target:
+    """Substitute ``{{inputs.x}}`` in every locator of a target."""
+    return target.model_copy(update={
+        "locators": tuple(c.model_copy(update={"locator": _rendered(c.locator, render)}) for c in target.locators)
+    })
 
 
 def _proposals(node: AXNode, handle: ElementHandle) -> list[tuple[Locator, str]]:

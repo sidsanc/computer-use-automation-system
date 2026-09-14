@@ -102,6 +102,10 @@ class Decision(Strict):
     reason: str
 
 
+def url_allowed(policy: Policy, url: str) -> bool:
+    return _allowed_url(policy, url)
+
+
 def _allowed_url(policy: Policy, url: str) -> bool:
     return origin(url) in policy.allowed_origins and any(path_matches(p, url) for p in policy.allowed_paths)
 

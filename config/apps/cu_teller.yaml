@@ -24,3 +24,81 @@ policy:
 
 # Values shown next to these captions are personal data and are masked in logs and model context.
 sensitive_captions: [Name, Member Since]
+
+fingerprint:
+  text_regex: 'CU Teller v(\d+\.\d+\.\d+)'
+  frame_path: [main]
+
+login:
+  path: /login
+  secrets: [teller_username, teller_password]
+  steps:
+    - id: s01_fill_operator_id
+      intent: Enter the operator ID
+      action: {kind: fill, value: {secret: teller_username}}
+      effect: none
+      target:
+        frame_path: []
+        locators:
+          - locator: {kind: label_neighbor, role: textbox, label: Operator ID}
+            rationale: Caption in the neighbouring cell.
+    - id: s02_fill_password
+      intent: Enter the operator password
+      action: {kind: fill, value: {secret: teller_password}}
+      effect: none
+      target:
+        frame_path: []
+        locators:
+          - locator: {kind: css, selector: 'input[type=password]'}
+            rationale: Password fields expose no ARIA role; the sign-on form has exactly one.
+    - id: s03_sign_on
+      intent: Submit the sign-on form
+      action: {kind: click}
+      effect: navigation
+      target:
+        frame_path: []
+        locators:
+          - locator: {kind: role_name, role: button, name: Sign On}
+            rationale: Button by role and name.
+      post:
+        - {kind: frame_url, frame_path: [], path: /teller}
+      handlers:
+        - code: sign_on_rejected
+          kind: hard_failure
+          message: The configured operator credentials were rejected.
+          when: [{kind: text_visible, text: ERR-001}]
+  success:
+    - {kind: frame_url, frame_path: [], path: /teller}
+
+# Known runtime states for every CU Teller capability. Capability or step handlers with
+# the same code take precedence.
+handlers:
+  - code: session_expired
+    kind: recoverable
+    message: The teller session timed out; sign on again and restart the flow.
+    when: [{kind: text_visible, text: SES-440 SESSION EXPIRED}]
+    recovery: {kind: reauth_and_restart}
+  - code: maintenance_notice
+    kind: recoverable
+    message: A system notice interstitial was shown; acknowledge it and continue.
+    when: [{kind: text_visible, text: SYSTEM NOTICE, frame_path: [main], match: exact}]
+    recovery:
+      kind: dismiss
+      target:
+        frame_path: [main]
+        locators:
+          - locator: {kind: role_name, role: link, name: Continue}
+            rationale: The notice's only link.
+    max_attempts: 2
+  - code: core_host_unavailable
+    kind: hard_failure
+    message: The core banking host returned an error page.
+    when: [{kind: text_visible, text: CORE HOST UNAVAILABLE}]
+  - code: page_not_found
+    kind: hard_failure
+    message: The application returned a page-not-found error.
+    when: [{kind: text_visible, text: 404 PAGE NOT FOUND}]
+  - code: access_denied
+    kind: business_outcome
+    message: The operator is not authorized to service this record.
+    when: [{kind: text_visible, text: SEC-7 ACCESS DENIED}]

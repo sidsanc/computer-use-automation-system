@@ -102,6 +102,54 @@
     return parts.join(" > ");
   },
 
+  // Where an action leads: link href, or the form submission it triggers.
+  actionInfo(el, kind, key) {
+    const tag = el.tagName;
+    const name =
+      tag === "INPUT" && ["submit", "button", "image"].includes(el.type)
+        ? el.value
+        : el.getAttribute("aria-label") || (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA" ? "" : el.innerText);
+    const info = { name: this.norm(name), url: null, method: null };
+    const link = el.closest("a[href]");
+    if (link && kind === "click") return Object.assign(info, { url: link.href, method: "GET" });
+    const form = el.form || el.closest("form");
+    if (!form) return info;
+    const type = (el.getAttribute("type") || (tag === "BUTTON" ? "submit" : "")).toLowerCase();
+    const submits = kind === "click" && (tag === "INPUT" || tag === "BUTTON") && ["submit", "image"].includes(type);
+    const enter = kind === "press_key" && key === "Enter" && tag === "INPUT";
+    if (!submits && !enter) return info;
+    const formaction = el.getAttribute("formaction");
+    const url = formaction ? new URL(formaction, document.baseURI).href : form.action;
+    const method = (el.getAttribute("formmethod") || form.getAttribute("method") || "get").toUpperCase();
+    return Object.assign(info, { url, method });
+  },
+
+  // Temporarily black out sensitive values for a screenshot; always paired with unmask().
+  mask(captions, values) {
+    const want = new Set(captions.map((c) => c.toLowerCase()));
+    const mark = (el) => el.setAttribute("data-cua-masked", "");
+    for (const cell of document.querySelectorAll("td,th")) {
+      if (cell.querySelector("table")) continue;
+      const prev = cell.previousElementSibling;
+      const caption = prev ? this.norm(prev.innerText).replace(/:$/, "").trim().toLowerCase() : "";
+      const text = this.norm(cell.innerText);
+      if (want.has(caption) || values.some((v) => v && text.includes(v))) mark(cell);
+    }
+    for (const input of document.querySelectorAll("input")) {
+      if (input.type === "password" || values.includes(input.value)) mark(input);
+    }
+    const style = document.createElement("style");
+    style.setAttribute("data-cua-mask-style", "");
+    style.textContent = "[data-cua-masked]{background:#000!important;color:#000!important;-webkit-text-fill-color:#000!important}";
+    (document.head || document.documentElement).appendChild(style);
+    return document.querySelectorAll("[data-cua-masked]").length;
+  },
+
+  unmask() {
+    document.querySelectorAll("[data-cua-masked]").forEach((el) => el.removeAttribute("data-cua-masked"));
+    document.querySelectorAll("[data-cua-mask-style]").forEach((el) => el.remove());
+  },
+
   findTableCells(column, rowColumn, equals) {
     const found = [];
     for (const table of document.querySelectorAll("table")) {

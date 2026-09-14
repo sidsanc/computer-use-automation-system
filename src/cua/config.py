@@ -7,9 +7,27 @@ import yaml
 from pydantic import Field, HttpUrl
 
 from cua.policy.gate import Policy, PolicyNarrowing, ProductPolicy
+from cua.schema.artifact import Handler, Step
 from cua.schema.base import IDENT, Strict
+from cua.schema.conditions import Condition
 
 CONFIG_DIR = Path("config")
+
+
+class LoginFlow(Strict):
+    """Sign-on is app-level, run by the harness: credentials never enter a model's context or an artifact."""
+
+    path: str = Field(pattern=r"^/")
+    secrets: tuple[str, ...]
+    steps: tuple[Step, ...] = Field(min_length=1)
+    success: tuple[Condition, ...] = Field(min_length=1)
+
+
+class Fingerprint(Strict):
+    """How to read the product version off the screen, to check a capability's version range."""
+
+    text_regex: str
+    frame_path: tuple[str, ...] | None = None
 
 
 class AppProfile(Strict):
@@ -17,6 +35,11 @@ class AppProfile(Strict):
     name: str
     policy: ProductPolicy
     sensitive_captions: tuple[str, ...] = ()
+    login: LoginFlow
+    fingerprint: Fingerprint | None = None
+    handlers: tuple[Handler, ...] = Field(
+        default=(), description="Known runtime states shared by every capability of this product."
+    )
 
 
 class TenantConfig(Strict):

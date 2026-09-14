@@ -30,7 +30,8 @@ def frame_path(frame: Frame) -> tuple[str, ...]:
 def frame_for(page: Page, path: tuple[str, ...]) -> Frame:
     frame = page.main_frame
     for segment in path:
-        match = next((f for f in frame.child_frames if frame_segment(f) == segment), None)
+        live = [f for f in frame.child_frames if not f.is_detached()]
+        match = next((f for f in live if frame_segment(f) == segment), None)
         if match is None:
             raise FrameNotFoundError(f"frame {'/'.join(path)!r} not found (missing {segment!r})")
         frame = match

@@ -91,6 +91,7 @@ class RunResult(Strict):
     status: Status
     capability: CapabilityRef
     tenant: str
+    app_version: str | None = None
     inputs: dict[str, str]
     outputs: dict[str, Any] = {}
     outcome: Outcome | None = None

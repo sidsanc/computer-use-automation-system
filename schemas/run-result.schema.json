@@ -293,6 +293,18 @@
       "title": "Tenant",
       "type": "string"
     },
+    "app_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "App Version"
+    },
     "inputs": {
       "additionalProperties": {
         "type": "string"
