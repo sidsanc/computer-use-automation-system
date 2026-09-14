@@ -1,0 +1,7 @@
+tenant_id: cu_beta
+display_name: Riverbend Federal Credit Union
+app: cu_teller
+base_url: http://127.0.0.1:5002
+# Tenants may only narrow the product policy.
+policy:
+  max_steps: 20

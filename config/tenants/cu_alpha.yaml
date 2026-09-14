@@ -1,0 +1,4 @@
+tenant_id: cu_alpha
+display_name: Alpha Community Credit Union
+app: cu_teller
+base_url: http://127.0.0.1:5001

@@ -1,0 +1,26 @@
+# App profile for the "CU Teller" vendor product (Legacy Core Systems).
+# Authored once per product; every tenant running CU Teller inherits it.
+product: cu_teller
+name: CU Teller (Legacy Core Systems)
+
+policy:
+  allowed_paths:
+    - /login
+    - /logout
+    - /teller
+    - /teller/**
+  allowed_actions: [click, fill, select, press_key, wait_for, extract, request_human, finish]
+  # This product submits searches and review screens as POST; they do not change data.
+  read_posts:
+    - /login
+    - /teller/inquiry
+    - /teller/member/*/open-share
+  write_paths: []
+  irreversible_paths:
+    - /teller/member/*/open-share/commit
+  # Backstop for routes nobody listed: commit-like control names always need a human.
+  irreversible_keywords: [confirm, commit, transfer, withdraw, delete, approve, close account, post transaction]
+  max_steps: 25
+
+# Values shown next to these captions are personal data and are masked in logs and model context.
+sensitive_captions: [Name, Member Since]
