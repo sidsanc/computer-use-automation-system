@@ -27,6 +27,17 @@ def serve_mock(
     create_app(variant=variant).run(host="127.0.0.1", port=port, threaded=True)
 
 
+@app.command("schema")
+def schema(out: Annotated[str, typer.Option(help="Directory to write JSON Schemas into.")] = "schemas") -> None:
+    """Export JSON Schemas for the capability artifact and the run result."""
+    from pathlib import Path
+
+    from cua.schema_export import export_schemas
+
+    for path in export_schemas(Path(out)):
+        typer.echo(f"wrote {path}")
+
+
 def _faults_url(port: int) -> str:
     return f"http://127.0.0.1:{port}/__admin/faults"
 

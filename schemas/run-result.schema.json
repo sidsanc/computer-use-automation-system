@@ -1,0 +1,402 @@
+{
+  "$defs": {
+    "CapabilityRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "resolved_hash": {
+          "title": "Resolved Hash",
+          "type": "string"
+        },
+        "overlay": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Overlay"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "resolved_hash"
+      ],
+      "title": "CapabilityRef",
+      "type": "object"
+    },
+    "CommittedEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "step_id": {
+          "title": "Step Id",
+          "type": "string"
+        },
+        "actor": {
+          "enum": [
+            "automation",
+            "human"
+          ],
+          "title": "Actor",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "actor"
+      ],
+      "title": "CommittedEffect",
+      "type": "object"
+    },
+    "Failure": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "invalid_input",
+            "precondition_failed",
+            "locator_not_found",
+            "ambiguous_locator",
+            "postcondition_timeout",
+            "app_error",
+            "unexpected_state",
+            "recovery_exhausted",
+            "extraction_failed",
+            "internal_error"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "step_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Step Id"
+        },
+        "expected": {
+          "title": "Expected",
+          "type": "string"
+        },
+        "observed": {
+          "title": "Observed",
+          "type": "string"
+        },
+        "evidence": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "title": "Evidence",
+          "type": "object"
+        }
+      },
+      "required": [
+        "category",
+        "step_id",
+        "expected",
+        "observed"
+      ],
+      "title": "Failure",
+      "type": "object"
+    },
+    "InterventionRef": {
+      "additionalProperties": false,
+      "properties": {
+        "intervention_id": {
+          "title": "Intervention Id",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "step_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Step Id"
+        }
+      },
+      "required": [
+        "intervention_id",
+        "reason",
+        "step_id"
+      ],
+      "title": "InterventionRef",
+      "type": "object"
+    },
+    "Outcome": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "step_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step Id"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "Outcome",
+      "type": "object"
+    },
+    "PolicyDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "rule": {
+          "title": "Rule",
+          "type": "string"
+        },
+        "step_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Step Id"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule",
+        "step_id",
+        "reason"
+      ],
+      "title": "PolicyDecision",
+      "type": "object"
+    },
+    "RecoveryRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "step_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Step Id"
+        },
+        "handler": {
+          "title": "Handler",
+          "type": "string"
+        },
+        "recovery": {
+          "title": "Recovery",
+          "type": "string"
+        },
+        "attempt": {
+          "title": "Attempt",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "step_id",
+        "handler",
+        "recovery",
+        "attempt"
+      ],
+      "title": "RecoveryRecord",
+      "type": "object"
+    },
+    "SideEffects": {
+      "additionalProperties": false,
+      "properties": {
+        "committed": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CommittedEffect"
+          },
+          "title": "Committed",
+          "type": "array"
+        },
+        "possible": {
+          "default": [],
+          "description": "Write steps dispatched without confirmation.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Possible",
+          "type": "array"
+        }
+      },
+      "title": "SideEffects",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "success",
+        "business_outcome",
+        "needs_human",
+        "policy_blocked",
+        "failure"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "capability": {
+      "$ref": "#/$defs/CapabilityRef"
+    },
+    "tenant": {
+      "title": "Tenant",
+      "type": "string"
+    },
+    "inputs": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Inputs",
+      "type": "object"
+    },
+    "outputs": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Outputs",
+      "type": "object"
+    },
+    "outcome": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Outcome"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "failure": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Failure"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "policy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PolicyDecision"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "intervention": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/InterventionRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "recoveries_applied": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RecoveryRecord"
+      },
+      "title": "Recoveries Applied",
+      "type": "array"
+    },
+    "locator_ranks": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "default": {},
+      "title": "Locator Ranks",
+      "type": "object"
+    },
+    "side_effects": {
+      "$ref": "#/$defs/SideEffects",
+      "default": {
+        "committed": [],
+        "possible": []
+      }
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "duration_ms": {
+      "title": "Duration Ms",
+      "type": "integer"
+    },
+    "evidence_dir": {
+      "title": "Evidence Dir",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "status",
+    "capability",
+    "tenant",
+    "inputs",
+    "started_at",
+    "duration_ms",
+    "evidence_dir"
+  ],
+  "title": "RunResult",
+  "type": "object"
+}

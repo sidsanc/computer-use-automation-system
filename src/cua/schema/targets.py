@@ -7,11 +7,9 @@ and treats a match on more than one element as a hard failure, never picking the
 
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import Field
 
-
-class _Strict(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
+from cua.schema.base import Strict as _Strict
 
 
 class RoleName(_Strict):
