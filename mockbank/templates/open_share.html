@@ -1,0 +1,18 @@
+{% extends "_page.html" %}
+{% block heading %}Open New Share{% endblock %}
+{% block body %}
+<form method="post" action="/teller/member/{{ member.number }}/open-share">
+<table class="grid" cellpadding="4" cellspacing="1" border="0" width="460">
+  {% if error %}<tr><td colspan="2" class="err">{{ error }}</td></tr>{% endif %}
+  <tr><td width="140">{{ v.member_label }}:</td><td>{{ member.number }}</td></tr>
+  <tr><td>Share Type:</td><td>
+    <select name="f7">
+      <option value="">-- select --</option>
+      {% for code, name in share_types.items() %}<option value="{{ code }}">{{ code }} {{ name }}</option>{% endfor %}
+    </select>
+  </td></tr>
+  <tr><td>Initial Deposit:</td><td><input type="text" name="f8" size="12"></td></tr>
+  <tr><td></td><td><input type="submit" value="Continue"></td></tr>
+</table>
+</form>
+{% endblock %}

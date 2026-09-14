@@ -1,0 +1,12 @@
+{% extends "_page.html" %}
+{% block heading %}Share Opened{% endblock %}
+{% block body %}
+<table class="grid" cellpadding="4" cellspacing="1" border="0" width="460">
+  <tr><td class="hdr" colspan="2">SHARE OPENED SUCCESSFULLY</td></tr>
+  <tr><td width="140">Confirmation #:</td><td>{{ confirmation }}</td></tr>
+  <tr><td>Share ID:</td><td>{{ share_id }}</td></tr>
+  <tr><td>Share Type:</td><td>{{ share_name }}</td></tr>
+  <tr><td>Initial Deposit:</td><td>{{ amount|money }}</td></tr>
+  <tr><td></td><td><a href="/teller/member/{{ member.number }}">Return to Member</a></td></tr>
+</table>
+{% endblock %}

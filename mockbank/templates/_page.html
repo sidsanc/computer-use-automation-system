@@ -1,0 +1,23 @@
+<html>
+<head>
+<title>{% block title %}CU Teller{% endblock %}</title>
+<style>
+body { font-family: Verdana, Arial, sans-serif; font-size: 11px; margin: 6px; background: #FFFFFF; }
+td { font-family: Verdana, Arial, sans-serif; font-size: 11px; }
+.bar { background: {{ v.header_bg }}; color: #FFFFFF; font-weight: bold; padding: 3px; }
+.grid { background: {{ v.table_bg }}; }
+.hdr { background: {{ v.header_bg }}; color: #FFFFFF; font-weight: bold; }
+.err { color: #CC0000; font-weight: bold; }
+.foot { color: #666666; font-size: 9px; }
+</style>
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td class="bar">{{ v.institution }} &nbsp;::&nbsp; {% block heading %}{% endblock %}</td></tr>
+</table>
+<br>
+{% block body %}{% endblock %}
+<br><br>
+<table width="100%" border="0"><tr><td class="foot">CU Teller v{{ v.product_version }} &copy; Legacy Core Systems</td></tr></table>
+</body>
+</html>

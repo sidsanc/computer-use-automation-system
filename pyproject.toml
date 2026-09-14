@@ -1,0 +1,47 @@
+[project]
+name = "cua"
+version = "0.1.0"
+description = "Computer-use automation: LLM discovery, typed capability artifacts, deterministic replay, human handoff."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "anthropic>=0.60",
+    "fastapi>=0.115",
+    "flask>=3.0",
+    "httpx>=0.27",
+    "playwright>=1.50",
+    "pydantic>=2.8",
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
+    "typer>=0.12",
+    "uvicorn>=0.30",
+]
+
+[project.scripts]
+cua = "cua.cli:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cua", "mockbank"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "browser: tests that launch a real Chromium via Playwright",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]

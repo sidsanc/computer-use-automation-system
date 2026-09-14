@@ -1,0 +1,13 @@
+{% extends "_page.html" %}
+{% block title %}CU Teller - Sign On{% endblock %}
+{% block heading %}Operator Sign On{% endblock %}
+{% block body %}
+<form method="post" action="/login">
+<table class="grid" cellpadding="4" cellspacing="1" border="0">
+  {% if error %}<tr><td colspan="2" class="err">{{ error }}</td></tr>{% endif %}
+  <tr><td align="right">Operator ID:</td><td><input type="text" name="f1" size="12"></td></tr>
+  <tr><td align="right">Password:</td><td><input type="password" name="f2" size="12"></td></tr>
+  <tr><td></td><td><input type="submit" value="Sign On"></td></tr>
+</table>
+</form>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "_page.html" %}
+{% block heading %}Member Detail{% endblock %}
+{% block body %}
+<table class="grid" cellpadding="4" cellspacing="1" border="0" width="520">
+  <tr><td width="140">{{ v.member_label }}:</td><td>{{ member.number }}</td></tr>
+  <tr><td>Name:</td><td>{{ member.name }}</td></tr>
+  <tr><td>Member Since:</td><td>{{ member.member_since }}</td></tr>
+  <tr><td>Status:</td><td>{{ member.status }}</td></tr>
+</table>
+<br>
+<table class="grid" cellpadding="4" cellspacing="1" border="0" width="520">
+  <tr><td colspan="{{ 4 if v.show_available else 3 }}"><b>SHARES</b></td></tr>
+  <tr>
+    <td class="hdr">Share ID</td>
+    <td class="hdr">Description</td>
+    {% if v.show_available %}<td class="hdr">Available</td>{% endif %}
+    <td class="hdr">Balance</td>
+  </tr>
+  {% for s in member.shares %}
+  <tr>
+    <td>{{ s.share_id }}</td>
+    <td>{{ s.description }}</td>
+    {% if v.show_available %}<td align="right">{{ s.available|money }}</td>{% endif %}
+    <td align="right">{{ s.balance|money }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<br>
+<table border="0" cellpadding="2"><tr>
+  <td><form method="get" action="/teller/member/{{ member.number }}/open-share"><input type="submit" value="Open New Share"></form></td>
+  <td><form method="get" action="/teller/inquiry"><input type="submit" value="New Inquiry"></form></td>
+</tr></table>
+
+{% if show_dialog %}
+<div role="dialog" aria-modal="true" aria-label="Compliance Review"
+     style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.35);"
+     onclick="event.stopPropagation()">
+  <table class="grid" cellpadding="8" border="1" style="margin:80px auto; background:#FFFFE0;" width="360">
+    <tr><td class="hdr">COMPLIANCE REVIEW REQUIRED</td></tr>
+    <tr><td>CMP-417 This record has a pending compliance review flag. An authorized officer must acknowledge before servicing continues.</td></tr>
+    <tr><td align="right"><button type="button" onclick="this.closest('[role=dialog]').remove()">Acknowledge</button></td></tr>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

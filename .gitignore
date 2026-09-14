@@ -1,0 +1,32 @@
+# Assignment materials and local research notes (not part of the submission)
+*.pdf
+interface-ai-takehome-reference-brief.md
+.claude/
+CLAUDE.md
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+
+# Run output (curated runs are copied into /evidence)
+runs/
+*.trace.zip
+test-results/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

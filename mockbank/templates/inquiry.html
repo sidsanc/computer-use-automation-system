@@ -1,0 +1,14 @@
+{% extends "_page.html" %}
+{% block heading %}{{ v.inquiry_nav }}{% endblock %}
+{% block body %}
+<form method="post" action="/teller/inquiry">
+<table class="grid" cellpadding="4" cellspacing="1" border="0">
+  {% if error %}<tr><td colspan="3" class="err">{{ error }}</td></tr>{% endif %}
+  <tr>
+    <td align="right">{{ v.member_label }}:</td>
+    <td><input type="text" name="f3" size="10" maxlength="10"></td>
+    <td><input type="submit" value="Search"></td>
+  </tr>
+</table>
+</form>
+{% endblock %}

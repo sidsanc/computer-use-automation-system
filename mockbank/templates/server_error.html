@@ -1,0 +1,8 @@
+{% extends "_page.html" %}
+{% block heading %}Error{% endblock %}
+{% block body %}
+<table class="grid" cellpadding="6" border="0" width="460">
+  <tr><td class="err">{{ code or "500 INTERNAL SERVER ERROR" }}</td></tr>
+  <tr><td>CORE HOST UNAVAILABLE (RC=0x8F). Retry later or contact the help desk.</td></tr>
+</table>
+{% endblock %}

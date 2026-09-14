@@ -1,0 +1,21 @@
+<html>
+<head>
+<style>
+body { font-family: Verdana, Arial, sans-serif; font-size: 11px; margin: 4px; background: {{ v.table_bg }}; }
+td { font-family: Verdana, Arial, sans-serif; font-size: 11px; padding: 3px; }
+.bar { background: {{ v.header_bg }}; color: #FFFFFF; font-weight: bold; }
+</style>
+</head>
+<body>
+<table width="100%" cellspacing="0" border="0">
+  <tr><td class="bar">MAIN MENU</td></tr>
+  {% for item in v.nav_order %}
+    {% if item == "home" %}<tr><td><a href="/teller/home" target="main">Teller Home</a></td></tr>
+    {% elif item == "inquiry" %}<tr><td><a href="/teller/inquiry" target="main">{{ v.inquiry_nav }}</a></td></tr>
+    {% elif item == "reports" %}<tr><td><a href="/teller/reports" target="main">Reports</a></td></tr>
+    {% elif item == "signoff" %}<tr><td><a href="/logout" target="_top">Sign Off</a></td></tr>
+    {% endif %}
+  {% endfor %}
+</table>
+</body>
+</html>

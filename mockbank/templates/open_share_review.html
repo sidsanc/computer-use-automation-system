@@ -1,0 +1,18 @@
+{% extends "_page.html" %}
+{% block heading %}Review New Share{% endblock %}
+{% block body %}
+<form method="post" action="/teller/member/{{ member.number }}/open-share/commit">
+<input type="hidden" name="f7" value="{{ share_type }}">
+<input type="hidden" name="f8" value="{{ amount }}">
+<table class="grid" cellpadding="4" cellspacing="1" border="0" width="460">
+  <tr><td class="hdr" colspan="2">REVIEW - THIS ACTION POSTS TO THE CORE</td></tr>
+  <tr><td width="140">{{ v.member_label }}:</td><td>{{ member.number }}</td></tr>
+  <tr><td>Share Type:</td><td>{{ share_name }}</td></tr>
+  <tr><td>Initial Deposit:</td><td>{{ amount|money }}</td></tr>
+  <tr><td></td><td>
+    <input type="submit" value="Confirm">
+    &nbsp;<a href="/teller/member/{{ member.number }}">Cancel</a>
+  </td></tr>
+</table>
+</form>
+{% endblock %}
