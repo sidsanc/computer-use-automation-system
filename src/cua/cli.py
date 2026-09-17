@@ -1,3 +1,4 @@
+import json
 from typing import Annotated
 
 import httpx
@@ -95,6 +96,51 @@ def replay(
         browser.close()
     typer.echo(result.model_dump_json(indent=2))
     raise typer.Exit(result.exit_code)
+
+
+@app.command()
+def discover(
+    goal_file: Annotated[str, typer.Argument(help="Goal spec YAML (goal + typed input/output contract).")],
+    tenant: Annotated[str, typer.Option(help="Tenant id from config/tenants.")],
+    param: Annotated[list[str], typer.Option("--param", "-p", help="Discovery input as name=value.")] = [],  # noqa: B006
+    model: Annotated[str, typer.Option(help="Claude model id.")] = "claude-opus-5",
+    effort: Annotated[str, typer.Option(help="low | medium | high | xhigh | max")] = "high",
+    verify_param: Annotated[list[str], typer.Option(help="Inputs for the verification replay (default: same).")] = [],  # noqa: B006
+    headed: Annotated[bool, typer.Option(help="Show the browser window.")] = False,
+    video: Annotated[bool, typer.Option(help="Record video (unmasked; fake data only).")] = False,
+    evidence_root: Annotated[str, typer.Option()] = "runs",
+) -> None:
+    """Let Claude accomplish a goal on the live app, record it as a capability, then replay it without the model."""
+    from pathlib import Path
+
+    from playwright.sync_api import sync_playwright
+
+    from cua.config import Workspace
+    from cua.discovery.agent import DiscoveryAgent, DiscoveryOptions
+    from cua.discovery.goal import GoalSpec
+    from cua.discovery.llm import AnthropicModelClient
+    from cua.replay.engine import ReplayEngine, ReplayOptions
+    from cua.secrets import EnvSecretStore
+
+    goal = GoalSpec.load(Path(goal_file))
+    workspace = Workspace()
+    tenant_config = workspace.tenant(tenant)
+    app_profile = workspace.app(tenant_config.app)
+    inputs = _params(param)
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=not headed)
+        agent = DiscoveryAgent(browser, AnthropicModelClient(model, effort), EnvSecretStore())
+        result = agent.run(goal, tenant_config, app_profile, inputs,
+                           DiscoveryOptions(evidence_root=Path(evidence_root), video=video))
+        summary = {"discovery": {k: v for k, v in vars(result).items() if k != "capability"}}
+        if result.capability is not None:
+            verification = ReplayEngine(browser, EnvSecretStore()).run(
+                result.capability, tenant_config, app_profile, _params(verify_param) or inputs,
+                ReplayOptions(evidence_root=Path(evidence_root)))
+            summary["verification_replay"] = json.loads(verification.model_dump_json())
+        browser.close()
+    typer.echo(json.dumps(summary, indent=2))
+    raise typer.Exit(0 if result.status == "recorded" else 20 if result.status == "needs_human" else 40)
 
 
 def _faults_url(port: int) -> str:

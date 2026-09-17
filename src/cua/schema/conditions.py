@@ -34,7 +34,7 @@ class TextVisible(Strict):
     kind: Literal["text_visible"] = "text_visible"
     text: str = Field(min_length=1)
     frame_path: tuple[str, ...] | None = None  # None = any frame
-    match: Literal["contains", "exact"] = "contains"
+    match: Literal["contains", "exact", "regex"] = "contains"
 
 
 class ElementPresent(Strict):

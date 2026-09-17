@@ -81,4 +81,5 @@ class Redactor:
             if n.name_source == "neighbor_label" and self._caption(n.name) in self._captions and value:
                 value = "[pii]"
             nodes.append(n.model_copy(update={"name": name, "value": value}))
-        return obs.model_copy(update={"nodes": nodes})
+        frames = [f.model_copy(update={"url": self.text(f.url)}) for f in obs.frames]
+        return obs.model_copy(update={"nodes": nodes, "frames": frames, "title": self.text(obs.title)})

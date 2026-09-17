@@ -11,7 +11,7 @@ from typing import Any, Literal
 
 from pydantic import Field, model_validator
 
-from cua.schema.artifact import Capability
+from cua.schema.artifact import Capability, InputSpec
 from cua.schema.base import Strict
 
 Status = Literal["success", "business_outcome", "needs_human", "policy_blocked", "failure"]
@@ -140,9 +140,13 @@ def validate_inputs(capability: Capability, raw: dict[str, str]) -> dict[str, st
     A malformed input is a caller error (failure/invalid_input); the application's own
     validation messages, if it gets that far, are business outcomes.
     """
-    problems = [f"missing input '{n}'" for n in capability.inputs if n not in raw]
-    problems += [f"unexpected input '{n}'" for n in raw if n not in capability.inputs]
-    for name, spec in capability.inputs.items():
+    return check_inputs(capability.inputs, raw)
+
+
+def check_inputs(specs: dict[str, InputSpec], raw: dict[str, str]) -> dict[str, str]:
+    problems = [f"missing input '{n}'" for n in specs if n not in raw]
+    problems += [f"unexpected input '{n}'" for n in raw if n not in specs]
+    for name, spec in specs.items():
         value = raw.get(name)
         if value is None:
             continue

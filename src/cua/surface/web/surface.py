@@ -7,6 +7,7 @@ fails to expose: captions in neighbouring cells and bold header rows.
 
 import itertools
 import re
+import time
 import uuid
 from collections.abc import Callable
 from typing import Literal
@@ -264,7 +265,7 @@ class WebSurface:
         match condition:
             case TextVisible(text=text, frame_path=path, match=mode):
                 frames = [frame_for(self.page, path)] if path is not None else self.page.frames
-                wanted = render(text)
+                wanted = re.compile(render(text)) if mode == "regex" else render(text)
                 for frame in frames:
                     loc = frame.get_by_text(wanted, exact=mode == "exact")
                     if any(loc.nth(i).is_visible() for i in range(min(loc.count(), 5))):
@@ -296,7 +297,24 @@ class WebSurface:
     def frame_urls(self) -> dict[str, str]:
         return {"/".join(frame_path(f)) or "top": f.url for f in self.page.frames}
 
-    def screenshot_masked(self, captions: list[str], values: list[str]) -> tuple[bytes, int]:
+    def settle(self, timeout_s: float = 10) -> bool:
+        """Wait until every frame has finished loading and its text has stopped changing."""
+        deadline = time.monotonic() + timeout_s
+        previous = None
+        while time.monotonic() < deadline:
+            try:
+                probe = "() => [document.readyState, document.body ? document.body.innerText.length : 0]"
+                snapshot = tuple((f.url, f.evaluate(probe)) for f in self.page.frames)
+            except PlaywrightError:
+                snapshot = None
+            ready = snapshot is not None and all(state[0] == "complete" for _, state in snapshot)
+            if ready and snapshot == previous:
+                return True
+            previous = snapshot
+            self.page.wait_for_timeout(250)
+        return False
+
+    def screenshot_masked(self, captions: list[str], values: list[str], jpeg: bool = False) -> tuple[bytes, int]:
         masked = 0
         for frame in self.page.frames:
             try:
@@ -305,6 +323,8 @@ class WebSurface:
             except PlaywrightError:
                 continue
         try:
+            if jpeg:
+                return self.page.screenshot(type="jpeg", quality=60), masked
             return self.page.screenshot(full_page=True), masked
         finally:
             for frame in self.page.frames:

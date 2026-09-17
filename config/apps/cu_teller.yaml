@@ -102,3 +102,12 @@ handlers:
     kind: business_outcome
     message: The operator is not authorized to service this record.
     when: [{kind: text_visible, text: SEC-7 ACCESS DENIED}]
+  # CU Teller's error catalogue: ERR-404 is "not on file"; ERR-1xx/2xx are field validation.
+  - code: member_not_found
+    kind: business_outcome
+    message: No member exists with that number.
+    when: [{kind: text_visible, text: ERR-404 MEMBER NOT ON FILE}]
+  - code: validation_error
+    kind: business_outcome
+    message: The application rejected an input value.
+    when: [{kind: text_visible, text: 'ERR-[12]\d\d ', match: regex, frame_path: [main]}]

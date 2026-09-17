@@ -1,0 +1,18 @@
+capability_id: member.savings_balance.lookup
+title: Look up a member's Regular Savings balance
+goal: >-
+  Find the member by their member number and read the current balance of their
+  Regular Savings share.
+entry: /teller
+inputs:
+  member_number:
+    type: string
+    description: 6-digit member number
+    pattern: '^\d{6}$'
+    sensitivity: pii
+outputs:
+  savings_balance:
+    type: money
+    currency: USD
+    description: Current balance of the member's Regular Savings share
+    sensitivity: financial
