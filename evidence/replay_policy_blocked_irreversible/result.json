@@ -1,10 +1,10 @@
 {
-  "run_id": "f77c5fa469ce",
+  "run_id": "45e10fb9a5c5",
   "status": "policy_blocked",
   "capability": {
     "id": "member.share_account.open",
     "version": "1.0.0",
-    "resolved_hash": "fd7564de0314e748",
+    "resolved_hash": "90f1ea585098b02d",
     "overlay": null
   },
   "tenant": "cu_alpha",
@@ -40,7 +40,7 @@
     "committed": [],
     "possible": []
   },
-  "started_at": "2026-09-18T22:18:49.531953Z",
-  "duration_ms": 844,
-  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T221849Z_replay_f77c5fa469ce"
+  "started_at": "2026-09-18T22:54:04.313433Z",
+  "duration_ms": 1202,
+  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T225404Z_replay_45e10fb9a5c5"
 }

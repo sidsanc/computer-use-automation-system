@@ -40,6 +40,58 @@ def schema(out: Annotated[str, typer.Option(help="Directory to write JSON Schema
 
 
 @app.command()
+def catalog(
+    tools: Annotated[bool, typer.Option(help="Print LLM tool definitions instead of full contracts.")] = False,
+) -> None:
+    """List the capabilities an AI agent can call, as typed contracts."""
+    from pathlib import Path
+
+    from cua.catalog import Catalog
+
+    book = Catalog(Path("capabilities"))
+    typer.echo(json.dumps(book.tools() if tools else book.contracts(), indent=2))
+
+
+@app.command()
+def ask(
+    request: Annotated[str, typer.Argument(help="What the agent should accomplish, in plain language.")],
+    tenant: Annotated[str, typer.Option(help="Tenant id from config/tenants.")],
+    model: Annotated[str, typer.Option(help="Claude model id.")] = "claude-sonnet-5",
+    headed: Annotated[bool, typer.Option(help="Show the browser window.")] = False,
+    evidence_root: Annotated[str, typer.Option()] = "runs",
+) -> None:
+    """Act as the calling agent: pick a capability for the request, invoke it, and answer.
+
+    This is the production path the whole system exists for — the model chooses *what* to do, and a
+    recorded capability does it deterministically.
+    """
+    from pathlib import Path
+
+    from playwright.sync_api import sync_playwright
+
+    from cua.catalog import Catalog, run_agent_request
+    from cua.discovery.llm import AnthropicModelClient
+    from cua.replay.engine import ReplayEngine, ReplayOptions
+    from cua.secrets import EnvSecretStore
+
+    book = Catalog(Path("capabilities"))
+    tenant_config, app_profile = book.target(tenant)
+    overlay = book.overlay_for(tenant_config)
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=not headed)
+        engine = ReplayEngine(browser, EnvSecretStore())
+
+        def invoke(entry, arguments):
+            typer.secho(f"  agent calls {entry.name} with {json.dumps(arguments)}", fg="cyan", err=True)
+            return engine.run(entry.capability, tenant_config, app_profile, arguments,
+                              ReplayOptions(evidence_root=Path(evidence_root)), overlay=overlay)
+
+        outcome = run_agent_request(book, AnthropicModelClient(model), request, invoke)
+        browser.close()
+    typer.echo(json.dumps(outcome, indent=2, default=str))
+
+
+@app.command()
 def demo(
     evidence_root: Annotated[str, typer.Option(help="Where the tour's run directories are written.")] = "runs/demo",
     video: Annotated[bool, typer.Option(help="Record the handoff run (unmasked; fictional data only).")] = False,

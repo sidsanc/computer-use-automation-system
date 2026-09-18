@@ -29,6 +29,7 @@ FailureCategory = Literal[
     "locator_not_found",
     "ambiguous_locator",
     "postcondition_timeout",
+    "ambiguous_write",
     "app_error",
     "unexpected_state",
     "recovery_exhausted",

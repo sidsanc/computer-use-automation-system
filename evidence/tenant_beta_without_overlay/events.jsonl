@@ -1,23 +1,23 @@
-{"seq": 1, "ts": "2026-09-18T22:18:51.448135+00:00", "type": "run_started", "capability": {"id": "member.savings_balance.lookup", "version": "1.0.0", "resolved_hash": "37cdad42abae83e4", "overlay": null}, "tenant": "cu_beta", "inputs": {"member_number": "[pii]"}, "attended": false, "allow_irreversible": false}
-{"seq": 2, "ts": "2026-09-18T22:18:51.498198+00:00", "type": "navigated", "path": "/login"}
-{"seq": 3, "ts": "2026-09-18T22:18:51.498198+00:00", "type": "step_started", "step_id": "s01_fill_operator_id", "intent": "Enter the operator ID", "action": "fill"}
-{"seq": 4, "ts": "2026-09-18T22:18:51.530565+00:00", "type": "policy_decision", "step_id": "s01_fill_operator_id", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
-{"seq": 5, "ts": "2026-09-18T22:18:51.534582+00:00", "type": "action_performed", "step_id": "s01_fill_operator_id", "action": "fill", "risk": "read", "locator_rank": null}
-{"seq": 6, "ts": "2026-09-18T22:18:51.540090+00:00", "type": "step_completed", "step_id": "s01_fill_operator_id"}
-{"seq": 7, "ts": "2026-09-18T22:18:51.540090+00:00", "type": "step_started", "step_id": "s02_fill_password", "intent": "Enter the operator password", "action": "fill"}
-{"seq": 8, "ts": "2026-09-18T22:18:51.552036+00:00", "type": "policy_decision", "step_id": "s02_fill_password", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
-{"seq": 9, "ts": "2026-09-18T22:18:51.555058+00:00", "type": "action_performed", "step_id": "s02_fill_password", "action": "fill", "risk": "read", "locator_rank": null}
-{"seq": 10, "ts": "2026-09-18T22:18:51.561059+00:00", "type": "step_completed", "step_id": "s02_fill_password"}
-{"seq": 11, "ts": "2026-09-18T22:18:51.561059+00:00", "type": "step_started", "step_id": "s03_sign_on", "intent": "Submit the sign-on form", "action": "click"}
-{"seq": 12, "ts": "2026-09-18T22:18:51.573695+00:00", "type": "policy_decision", "step_id": "s03_sign_on", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "POST to a route known to be read-only"}
-{"seq": 13, "ts": "2026-09-18T22:18:51.630533+00:00", "type": "action_performed", "step_id": "s03_sign_on", "action": "click", "risk": "navigation", "locator_rank": null}
-{"seq": 14, "ts": "2026-09-18T22:18:51.678624+00:00", "type": "step_completed", "step_id": "s03_sign_on"}
-{"seq": 15, "ts": "2026-09-18T22:18:51.698400+00:00", "type": "signed_on"}
-{"seq": 16, "ts": "2026-09-18T22:18:51.716974+00:00", "type": "navigated", "path": "/teller"}
-{"seq": 17, "ts": "2026-09-18T22:18:51.720485+00:00", "type": "app_fingerprint", "version": "7.3.1", "required": ">=7.2,<8"}
-{"seq": 18, "ts": "2026-09-18T22:18:51.720485+00:00", "type": "step_started", "step_id": "s01_open_member_inquiry_from_main_menu", "intent": "Open Member Inquiry from main menu", "action": "click"}
-{"seq": 19, "ts": "2026-09-18T22:18:51.777262+00:00", "type": "policy_decision", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "GET navigation"}
-{"seq": 20, "ts": "2026-09-18T22:18:51.817948+00:00", "type": "action_performed", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "risk": "navigation", "locator_rank": 1}
-{"seq": 21, "ts": "2026-09-18T22:19:02.067021+00:00", "type": "attachment", "name": "failure.png", "bytes": 14514, "masking": "blackout:0"}
-{"seq": 22, "ts": "2026-09-18T22:19:02.104572+00:00", "type": "failure_detected", "category": "postcondition_timeout", "step_id": "s01_open_member_inquiry_from_main_menu", "expected": "{\"frame_path\": [\"main\"], \"path\": \"/teller/inquiry\"}", "observed": "{\"frames\": {\"top\": \"http://127.0.0.1:50079/teller\", \"nav\": \"http://127.0.0.1:50079/teller/nav\", \"main\": \"http://127.0.0.1:50079/teller/home\"}, \"dialogs\": [], \"title\": \"CU Teller - Riverbend Federal Credit Union\"}", "evidence": {"screenshot": "failure.png", "observation": "failure-observation.json"}}
-{"seq": 23, "ts": "2026-09-18T22:19:02.108598+00:00", "type": "run_finished", "status": "failure", "exit_code": 40, "duration_ms": 10657}
+{"seq": 1, "ts": "2026-09-18T22:54:30.578196+00:00", "type": "run_started", "capability": {"id": "member.savings_balance.lookup", "version": "1.0.0", "resolved_hash": "63172b5d5d6f6a15", "overlay": null}, "tenant": "cu_beta", "inputs": {"member_number": "[pii]"}, "attended": false, "allow_irreversible": false}
+{"seq": 2, "ts": "2026-09-18T22:54:30.621357+00:00", "type": "navigated", "path": "/login"}
+{"seq": 3, "ts": "2026-09-18T22:54:30.622868+00:00", "type": "step_started", "step_id": "s01_fill_operator_id", "intent": "Enter the operator ID", "action": "fill"}
+{"seq": 4, "ts": "2026-09-18T22:54:30.654396+00:00", "type": "policy_decision", "step_id": "s01_fill_operator_id", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
+{"seq": 5, "ts": "2026-09-18T22:54:30.658913+00:00", "type": "action_performed", "step_id": "s01_fill_operator_id", "action": "fill", "risk": "read", "locator_rank": null}
+{"seq": 6, "ts": "2026-09-18T22:54:30.663962+00:00", "type": "step_completed", "step_id": "s01_fill_operator_id"}
+{"seq": 7, "ts": "2026-09-18T22:54:30.663962+00:00", "type": "step_started", "step_id": "s02_fill_password", "intent": "Enter the operator password", "action": "fill"}
+{"seq": 8, "ts": "2026-09-18T22:54:30.674859+00:00", "type": "policy_decision", "step_id": "s02_fill_password", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
+{"seq": 9, "ts": "2026-09-18T22:54:30.676856+00:00", "type": "action_performed", "step_id": "s02_fill_password", "action": "fill", "risk": "read", "locator_rank": null}
+{"seq": 10, "ts": "2026-09-18T22:54:30.682371+00:00", "type": "step_completed", "step_id": "s02_fill_password"}
+{"seq": 11, "ts": "2026-09-18T22:54:30.682371+00:00", "type": "step_started", "step_id": "s03_sign_on", "intent": "Submit the sign-on form", "action": "click"}
+{"seq": 12, "ts": "2026-09-18T22:54:30.693495+00:00", "type": "policy_decision", "step_id": "s03_sign_on", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "POST to a route known to be read-only"}
+{"seq": 13, "ts": "2026-09-18T22:54:30.747801+00:00", "type": "action_performed", "step_id": "s03_sign_on", "action": "click", "risk": "navigation", "locator_rank": null}
+{"seq": 14, "ts": "2026-09-18T22:54:30.791962+00:00", "type": "step_completed", "step_id": "s03_sign_on"}
+{"seq": 15, "ts": "2026-09-18T22:54:30.809013+00:00", "type": "signed_on"}
+{"seq": 16, "ts": "2026-09-18T22:54:30.824559+00:00", "type": "navigated", "path": "/teller"}
+{"seq": 17, "ts": "2026-09-18T22:54:30.828562+00:00", "type": "app_fingerprint", "version": "7.3.1", "required": ">=7.2,<8"}
+{"seq": 18, "ts": "2026-09-18T22:54:30.828562+00:00", "type": "step_started", "step_id": "s01_open_member_inquiry_from_main_menu", "intent": "Open Member Inquiry from main menu", "action": "click"}
+{"seq": 19, "ts": "2026-09-18T22:54:30.879022+00:00", "type": "policy_decision", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "GET navigation"}
+{"seq": 20, "ts": "2026-09-18T22:54:30.916863+00:00", "type": "action_performed", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "risk": "navigation", "locator_rank": 1}
+{"seq": 21, "ts": "2026-09-18T22:54:41.151507+00:00", "type": "attachment", "name": "failure.png", "bytes": 14514, "masking": "blackout:0"}
+{"seq": 22, "ts": "2026-09-18T22:54:41.184741+00:00", "type": "failure_detected", "category": "postcondition_timeout", "step_id": "s01_open_member_inquiry_from_main_menu", "expected": "{\"frame_path\": [\"main\"], \"path\": \"/teller/inquiry\"}", "observed": "{\"frames\": {\"top\": \"http://127.0.0.1:63543/teller\", \"nav\": \"http://127.0.0.1:63543/teller/nav\", \"main\": \"http://127.0.0.1:63543/teller/home\"}, \"dialogs\": [], \"title\": \"CU Teller - Riverbend Federal Credit Union\"}", "evidence": {"screenshot": "failure.png", "observation": "failure-observation.json"}}
+{"seq": 23, "ts": "2026-09-18T22:54:41.187871+00:00", "type": "run_finished", "status": "failure", "exit_code": 40, "duration_ms": 10608}

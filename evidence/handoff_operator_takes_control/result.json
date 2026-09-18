@@ -1,10 +1,10 @@
 {
-  "run_id": "a0bc8c34a1e6",
+  "run_id": "c1859762cc16",
   "status": "success",
   "capability": {
     "id": "member.savings_balance.lookup",
     "version": "1.0.0",
-    "resolved_hash": "37cdad42abae83e4",
+    "resolved_hash": "63172b5d5d6f6a15",
     "overlay": null
   },
   "tenant": "cu_alpha",
@@ -31,33 +31,33 @@
       ],
       "control": "button[button] Acknowledge",
       "value": null,
-      "at": "2026-09-18T22:18:49.408803Z"
+      "at": "2026-09-18T22:54:04.178498Z"
     }
   ],
   "control_transitions": [
     {
-      "at": "2026-09-18T22:18:49.363908+00:00",
+      "at": "2026-09-18T22:54:04.131248+00:00",
       "from": "automation",
       "to": "paused",
       "actor": "automation",
-      "note": "intervention edaf747d81"
+      "note": "intervention 6545d83697"
     },
     {
-      "at": "2026-09-18T22:18:49.365934+00:00",
+      "at": "2026-09-18T22:54:04.133966+00:00",
       "from": "paused",
       "to": "human",
       "actor": "demo-operator",
       "note": "operator took control"
     },
     {
-      "at": "2026-09-18T22:18:49.409809+00:00",
+      "at": "2026-09-18T22:54:04.178498+00:00",
       "from": "human",
       "to": "resuming",
       "actor": "demo-operator",
       "note": "operator handed control back"
     },
     {
-      "at": "2026-09-18T22:18:49.409809+00:00",
+      "at": "2026-09-18T22:54:04.178498+00:00",
       "from": "resuming",
       "to": "automation",
       "actor": "automation",
@@ -79,7 +79,7 @@
     ],
     "possible": []
   },
-  "started_at": "2026-09-18T22:18:48.578918Z",
-  "duration_ms": 891,
-  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T221848Z_replay_a0bc8c34a1e6"
+  "started_at": "2026-09-18T22:54:03.494156Z",
+  "duration_ms": 750,
+  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T225403Z_replay_c1859762cc16"
 }

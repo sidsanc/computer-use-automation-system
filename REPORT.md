@@ -18,6 +18,9 @@ artifact, and what a surface knows how to perform. Adding an action means touchi
   from what actually changed after.
 - **Replay** — the production path. No model, no network to a provider; a test walks the import
   graph to prove `cua.replay` cannot even import a model client.
+- **Catalogue** — capabilities as tool definitions an agent can read, plus the loop that lets it call
+  one and answer from the typed result. No model code lives here, so the same catalogue serves a
+  Claude tool loop, an MCP server or a plain HTTP caller.
 - **Policy, redaction, evidence, handoff** — cross-cutting, and used identically by both runners.
 
 Key decisions and trade-offs:
@@ -75,7 +78,11 @@ Why it is shaped this way:
   not carry its own value as an example.
 - **Typed inputs and outputs** (money parses to `{amount, currency}`), and `contract()` renders the
   agent-facing view: JSON Schema in and out, risk (`read` / `write` / `irreversible`), whether a human
-  is required, and the business-outcome codes the caller may receive.
+  is required, and the business-outcome codes the caller may receive. `cua catalog` turns that into
+  tool definitions and `cua ask` shows a model choosing a capability and answering from its typed
+  result — the other half of the through-line, with evidence in `evidence/agent_invocation_*`.
+- **A write step may declare a duplicate guard** (`idempotency.evidence`): observable proof that the
+  work already landed. It is the schema's answer to the ambiguous write (§3).
 - **Validators make bad artifacts unrepresentable**: unknown input references, an output not
   extracted exactly once, a write step without a postcondition, an irreversible step that is not a
   write, a recovery on a non-recoverable handler.
@@ -90,8 +97,15 @@ until the postcondition holds or a handler fires.
 
 - **Waits are condition-based.** There is no `wait(ms)` in the vocabulary; a slow screen is "not
   ready yet", bounded by a timeout, so a 4-second load is a success, not a flake.
-- **Writes are never re-dispatched.** A click that timed out may still have landed; recoveries go
-  back to *waiting*, and the result separates `side_effects.committed` from `possible`.
+- **Writes are never re-dispatched, and ambiguity is resolved rather than guessed.** A click that
+  timed out may still have landed — in a core banking system that is *the* dangerous case, because a
+  retry double-posts. Recoveries therefore go back to waiting, and the result separates
+  `side_effects.committed` from `possible`. Beyond that, a write step can declare what evidence would
+  prove the work landed; replay checks it before dispatching (so an already-completed write is
+  skipped, not repeated) and again when the postcondition times out, converting "maybe" into
+  committed, or into an explicit `ambiguous_write` failure telling the caller to reconcile before
+  retrying. Both sides are in evidence: the unguarded artifact fails and reports a possible write
+  that really did land; the hardened version returns the confirmation number, posting once.
 - **Known states are declared data, not code.** Handlers (`when` conditions → kind) live in the
   artifact and in the app profile, and fire in fixed precedence: escalate > hard_failure >
   business_outcome > recoverable. Recoveries have attempt budgets and pass the same policy gate.
@@ -191,10 +205,15 @@ and queueing/assignment would require.
 ## 7. Cuts
 
 **Deliberately not built.** An approval/confidence workflow beyond the `draft`/`approved` flag and its
-enforcement point; multi-run flakiness scoring; a capability catalogue endpoint (the agent-facing
-contract exists as `contract()`, nothing serves it); code generation from an artifact; assisted LLM
+enforcement point; multi-run flakiness scoring; code generation from an artifact; assisted LLM
 recovery on a failed step; queueing, multi-tenant plumbing or any horizontal scaling infrastructure —
 the brief explicitly does not reward it, and the abstractions that would need it are in place.
+
+I also considered and rejected a mutation-testing harness for locator robustness. It is the kind of
+thing that looks impressive, but the brief is explicit that drift is the *secondary* concern, and it
+would have graded our locator strategy against mutations we invented ourselves. The second tenant is
+a more honest test of the same property, and the effort went into the ambiguous write instead —
+which is where money is actually lost.
 
 **Mocked at a clean seam, deliberately.** The operator console is a plain local page (real HTTP, real
 token, real control transfer — but no auth, no assignment, no live video); evidence runs script the
@@ -204,11 +223,11 @@ discovered — a happy-path run cannot observe "not found", and pretending other
 common mistake this brief warns about; a negative-probe discovery pass is the natural next step.
 
 **What I would build next, in order:** (1) aggregate the drift signals we already emit into a
-per-tenant health view, since that is what turns this into an operable fleet; (2) negative-probe
-discovery to learn business outcomes instead of authoring them; (3) the catalogue endpoint so an
-agent can discover and invoke capabilities by name with typed arguments; (4) a proxied co-browse
-surface so control transfer is enforced rather than advisory, which also unlocks remote operators;
-(5) a desktop surface over UIA to prove the abstraction, starting with a read-only flow.
+per-tenant health view, and let a capability reach `approved` by evidence — N clean replays — so
+unattended execution is earned rather than declared; (2) negative-probe discovery to learn business
+outcomes instead of authoring them; (3) a proxied co-browse surface so control transfer is enforced
+rather than advisory, which also unlocks remote operators; (4) a desktop surface over UIA to prove
+the abstraction, starting with a read-only flow.
 
 **Known rough edges.** The recorder derives step ids from the model's intent text, so ids can be
 truncated oddly; postcondition inference prefers a frame URL change and falls back to a newly

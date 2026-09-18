@@ -240,6 +240,8 @@ def create_app(variant: str = "a", credentials: tuple[str, str] | None = None) -
         # Deliberately not idempotent: a double submit opens two shares, as many cores do.
         share_id = f"S{len(member.shares) + 20:02d}"
         member.shares.append(Share(share_id, SHARE_TYPES[share_type], amount, amount))
+        if faults.slow_commit_seconds:
+            time.sleep(faults.slow_commit_seconds)  # posted to the core; the response is late
         return render_template(
             "open_share_done.html",
             member=member,

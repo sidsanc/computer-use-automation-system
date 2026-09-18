@@ -1,0 +1,490 @@
+{
+  "schema_version": "1.0",
+  "id": "member.share_account.open",
+  "version": "1.1.0",
+  "status": "draft",
+  "title": "Open a new share account for a member",
+  "description": "Open a new share account of the requested type for the member, with the given initial deposit, and read back the confirmation number from the confirmation screen.",
+  "app": {
+    "product": "cu_teller",
+    "versions": ">=7.2,<8"
+  },
+  "entry": {
+    "path": "/teller"
+  },
+  "inputs": {
+    "member_number": {
+      "type": "string",
+      "description": "6-digit member number",
+      "pattern": "^\\d{6}$",
+      "enum": null,
+      "sensitivity": "pii"
+    },
+    "share_type": {
+      "type": "string",
+      "description": "Share type exactly as it appears in the Share Type list",
+      "pattern": null,
+      "enum": [
+        "01 Regular Savings",
+        "05 Holiday Club",
+        "20 Money Market"
+      ],
+      "sensitivity": "public"
+    },
+    "initial_deposit": {
+      "type": "money",
+      "description": "Opening deposit amount in dollars, e.g. 25.00",
+      "pattern": null,
+      "enum": null,
+      "sensitivity": "public"
+    }
+  },
+  "outputs": {
+    "confirmation_id": {
+      "type": "string",
+      "description": "Confirmation number shown after the share is opened",
+      "currency": null,
+      "sensitivity": "public"
+    }
+  },
+  "secrets": [],
+  "steps": [
+    {
+      "id": "s01_navigate_to_member_inquiry_to_locate_the",
+      "intent": "Navigate to Member Inquiry to locate the member",
+      "action": {
+        "kind": "click"
+      },
+      "target": {
+        "frame_path": [
+          "nav"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "role_name",
+              "role": "link",
+              "name": "Member Inquiry"
+            },
+            "rationale": "Accessible role and name; independent of markup structure and styling."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > table > tbody > tr:nth-of-type(3) > td > a",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [
+        {
+          "kind": "frame_url",
+          "frame_path": [
+            "main"
+          ],
+          "path": "/teller/inquiry"
+        }
+      ],
+      "effect": "navigation",
+      "irreversible": false,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation"
+    },
+    {
+      "id": "s02_enter_member_number_to_search_for_the_me",
+      "intent": "Enter member number to search for the member",
+      "action": {
+        "kind": "fill",
+        "value": {
+          "input": "member_number"
+        }
+      },
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "label_neighbor",
+              "role": "textbox",
+              "label": "Member Number"
+            },
+            "rationale": "Control has no accessible name; the caption in the neighbouring cell is what an operator reads and survives styling and layout changes."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > form > table > tbody > tr > td:nth-of-type(2) > input",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [],
+      "effect": "none",
+      "irreversible": false,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation"
+    },
+    {
+      "id": "s03_search_for_the_member",
+      "intent": "Search for the member",
+      "action": {
+        "kind": "click"
+      },
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Search"
+            },
+            "rationale": "Accessible role and name; independent of markup structure and styling."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > form > table > tbody > tr > td:nth-of-type(3) > input",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [
+        {
+          "kind": "frame_url",
+          "frame_path": [
+            "main"
+          ],
+          "path": "/teller/member/{{inputs.member_number}}"
+        }
+      ],
+      "effect": "navigation",
+      "irreversible": false,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation"
+    },
+    {
+      "id": "s04_open_a_new_share_account_for_this_member",
+      "intent": "Open a new share account for this member",
+      "action": {
+        "kind": "click"
+      },
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Open New Share"
+            },
+            "rationale": "Accessible role and name; independent of markup structure and styling."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > table:nth-of-type(4) > tbody > tr > td:nth-of-type(1) > form > input",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [
+        {
+          "kind": "frame_url",
+          "frame_path": [
+            "main"
+          ],
+          "path": "/teller/member/{{inputs.member_number}}/open-share"
+        }
+      ],
+      "effect": "navigation",
+      "irreversible": false,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation"
+    },
+    {
+      "id": "s05_select_the_requested_share_type",
+      "intent": "Select the requested share type",
+      "action": {
+        "kind": "select",
+        "option": {
+          "input": "share_type"
+        }
+      },
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "label_neighbor",
+              "role": "combobox",
+              "label": "Share Type"
+            },
+            "rationale": "Control has no accessible name; the caption in the neighbouring cell is what an operator reads and survives styling and layout changes."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > form > table > tbody > tr:nth-of-type(2) > td:nth-of-type(2) > select",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [],
+      "effect": "none",
+      "irreversible": false,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation"
+    },
+    {
+      "id": "s06_enter_the_initial_deposit_amount",
+      "intent": "Enter the initial deposit amount",
+      "action": {
+        "kind": "fill",
+        "value": {
+          "input": "initial_deposit"
+        }
+      },
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "label_neighbor",
+              "role": "textbox",
+              "label": "Initial Deposit"
+            },
+            "rationale": "Control has no accessible name; the caption in the neighbouring cell is what an operator reads and survives styling and layout changes."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > form > table > tbody > tr:nth-of-type(3) > td:nth-of-type(2) > input",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [],
+      "effect": "none",
+      "irreversible": false,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation"
+    },
+    {
+      "id": "s07_continue_to_confirm_opening_the_new_shar",
+      "intent": "Continue to confirm opening the new share account",
+      "action": {
+        "kind": "click"
+      },
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Continue"
+            },
+            "rationale": "Accessible role and name; independent of markup structure and styling."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > form > table > tbody > tr:nth-of-type(4) > td:nth-of-type(2) > input",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [
+        {
+          "kind": "frame_url",
+          "frame_path": [
+            "main"
+          ],
+          "path": "/teller/member/{{inputs.member_number}}/open-share"
+        }
+      ],
+      "effect": "navigation",
+      "irreversible": false,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation"
+    },
+    {
+      "id": "s08_confirm_opening_of_the_new_share_account",
+      "intent": "Confirm opening of the new share account (posts to core)",
+      "action": {
+        "kind": "click"
+      },
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Confirm"
+            },
+            "rationale": "Accessible role and name; independent of markup structure and styling."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > form > table > tbody > tr:nth-of-type(5) > td:nth-of-type(2) > input",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [
+        {
+          "kind": "frame_url",
+          "frame_path": [
+            "main"
+          ],
+          "path": "/teller/member/{{inputs.member_number}}/open-share/commit"
+        }
+      ],
+      "effect": "write",
+      "irreversible": true,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation",
+      "idempotency": {
+        "evidence": [
+          {
+            "kind": "text_visible",
+            "text": "SHARE OPENED SUCCESSFULLY",
+            "frame_path": [
+              "main"
+            ]
+          },
+          {
+            "kind": "frame_url",
+            "frame_path": [
+              "main"
+            ],
+            "path": "/teller/member/{{inputs.member_number}}/open-share/commit"
+          }
+        ],
+        "timeout_s": 20
+      }
+    },
+    {
+      "id": "s09_read_the_confirmation_number_from_the_su",
+      "intent": "Read the confirmation number from the success screen",
+      "action": {
+        "kind": "extract",
+        "output": "confirmation_id"
+      },
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > table:nth-of-type(2) > tbody > tr:nth-of-type(2) > td:nth-of-type(2)",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [],
+      "effect": "none",
+      "irreversible": false,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation"
+    }
+  ],
+  "success": [
+    {
+      "kind": "frame_url",
+      "frame_path": [
+        "main"
+      ],
+      "path": "/teller/member/{{inputs.member_number}}/open-share/commit"
+    },
+    {
+      "kind": "element_present",
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > table:nth-of-type(2) > tbody > tr:nth-of-type(2) > td:nth-of-type(2)",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      }
+    }
+  ],
+  "handlers": [],
+  "provenance": {
+    "method": "llm_discovery",
+    "recorded_at": "2026-09-18T20:47:04.516247Z",
+    "recorder_version": "1.0",
+    "run_id": "c59626c24799",
+    "model_id": "claude-sonnet-5",
+    "prompt_template_hash": "05d5d0b6abe0cb59",
+    "step_count": 9,
+    "token_usage": {
+      "input": 22061,
+      "output": 1129
+    },
+    "transcript_ref": "events.jsonl",
+    "notes": "Recorded by discovery as 1.0.0. A reviewer added a duplicate guard to the commit step: the core accepts the posting before it answers, so a lost response must be reconciled against the confirmation screen rather than retried."
+  }
+}

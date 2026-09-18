@@ -244,6 +244,55 @@
     "overlay": null
   },
   {
+    "run": "replay_ambiguous_write_unguarded",
+    "headline": "A lost response after a commit, with no duplicate guard",
+    "note": "The write did land. Replay cannot prove it, so it fails and reports the write as possible rather than claiming nothing happened.",
+    "status": "failure",
+    "exit_code": 40,
+    "outcome": null,
+    "failure": "postcondition_timeout",
+    "policy_rule": null,
+    "recoveries": [],
+    "human_actions": 0,
+    "locator_ranks": {
+      "s01_navigate_to_member_inquiry_to_locate_the": 0,
+      "s02_enter_member_number_to_search_for_the_me": 0,
+      "s03_search_for_the_member": 0,
+      "s04_open_a_new_share_account_for_this_member": 0,
+      "s05_select_the_requested_share_type": 0,
+      "s06_enter_the_initial_deposit_amount": 0,
+      "s07_continue_to_confirm_opening_the_new_shar": 0,
+      "s08_confirm_opening_of_the_new_share_account": 0
+    },
+    "tenant": "cu_alpha",
+    "overlay": null
+  },
+  {
+    "run": "replay_ambiguous_write_resolved",
+    "headline": "The same lost response, with a duplicate guard",
+    "note": "The step declares evidence that the work landed, so replay reconciles instead of retrying: one posting, confirmation returned.",
+    "status": "success",
+    "exit_code": 0,
+    "outcome": null,
+    "failure": null,
+    "policy_rule": null,
+    "recoveries": [],
+    "human_actions": 0,
+    "locator_ranks": {
+      "s01_navigate_to_member_inquiry_to_locate_the": 0,
+      "s02_enter_member_number_to_search_for_the_me": 0,
+      "s03_search_for_the_member": 0,
+      "s04_open_a_new_share_account_for_this_member": 0,
+      "s05_select_the_requested_share_type": 0,
+      "s06_enter_the_initial_deposit_amount": 0,
+      "s07_continue_to_confirm_opening_the_new_shar": 0,
+      "s08_confirm_opening_of_the_new_share_account": 0,
+      "s09_read_the_confirmation_number_from_the_su": 0
+    },
+    "tenant": "cu_alpha",
+    "overlay": null
+  },
+  {
     "run": "tenant_beta_without_overlay",
     "headline": "A second tenant, reworded, without its overlay",
     "note": "The brittle fallback matches the wrong control (rank 1) and the step's own check catches it.",

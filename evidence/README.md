@@ -28,6 +28,23 @@ uv run cua discover goals/member_open_share.yaml --tenant cu_alpha --attended \
     -p member_number=100871 -p "share_type=05 Holiday Club" -p initial_deposit=25.00
 ```
 
+## Invocation: an AI agent calls a capability
+
+The point of the artifact is that an agent can call it. These are real `claude-sonnet-5` runs where
+the model was given the catalogue (`cua catalog --tools`), chose a capability, supplied typed
+arguments and answered from the typed result. `agent_exchange.json` records the exchange; the rest
+of each directory is the replay it triggered.
+
+| Run | What it shows |
+| --- | --- |
+| `agent_invocation_success/` | "What is the current savings balance for member 100871?" → the agent calls `member_savings_balance_lookup`, gets `{"amount": "12940.00", "currency": "USD"}`, and answers. No model touched the UI. |
+| `agent_invocation_business_outcome/` | The same capability for member 999999 → `member_not_found` comes back as a business outcome, and the agent reports it as an answer instead of retrying or inventing one. |
+
+```
+uv run cua catalog --tools
+uv run cua ask "What is the current savings balance for member 100871?" --tenant cu_alpha
+```
+
 ## Replay: the artifact runs without a model
 
 Regenerate all of these, or watch the same scenarios narrated as they run (both are deterministic
@@ -57,6 +74,8 @@ only over fictional data.
 | `handoff_operator_takes_control/` | success (0) | The same session is handed to a person: `control_transitions` shows automation → paused → human → resuming → automation, `human_actions` records what they did (values masked in the page), and `resumed_after_human` shows replay continuing from the step the screen actually supports. |
 | `replay_policy_blocked_irreversible/` | policy_blocked (30) | Unattended replay refuses the irreversible commit: `irreversible_unattended`. |
 | `replay_irreversible_after_approval/` | success (0) | The same capability, attended and approved by an operator, commits and returns `confirmation_id`. |
+| `replay_ambiguous_write_unguarded/` | failure (40) | The commit lands but its response is lost. Replay cannot prove what happened, so it fails and reports `side_effects.possible` rather than claiming nothing happened. |
+| `replay_ambiguous_write_resolved/` | success (0) | The same lost response against the hardened `1.1.0`, whose commit step declares evidence that the work landed: replay reconciles instead of retrying, posts once, and returns the confirmation number. |
 | `tenant_beta_without_overlay/` | failure (40) | A second tenant running the same product, reworded. The preferred locator misses, the brittle CSS fallback matches the *wrong* link (`locator_ranks` = 1, the drift signal), and the step's own postcondition catches it instead of proceeding. |
 | `tenant_beta_with_overlay/` | success (0) | The same artifact plus a tenant overlay: all locators back to rank 0, `capability.overlay = cu_beta`. |
 

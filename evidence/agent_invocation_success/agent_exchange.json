@@ -1,0 +1,18 @@
+{
+  "request": "What is the current savings balance for member 100871?",
+  "model": "claude-sonnet-5",
+  "capability_called": "member_savings_balance_lookup",
+  "arguments": {
+    "member_number": "100871"
+  },
+  "result_to_agent": {
+    "status": "success",
+    "outputs": {
+      "savings_balance": {
+        "amount": "12940.00",
+        "currency": "USD"
+      }
+    }
+  },
+  "answer": "Member 100871's Regular Savings balance is currently $12,940.00 USD."
+}

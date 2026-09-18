@@ -98,6 +98,7 @@ class Tour:
     beta_mock: MockApp
     balance: Capability
     open_share: Capability
+    open_share_guarded: Capability
     runs_root: Path
     video_for: frozenset[str] = frozenset()
     secrets: DictSecretStore = field(
@@ -129,6 +130,20 @@ def _handoff(tour: Tour) -> RunResult:
                          {"member_number": "100234"}, operator=operator, attended=True)
     tour.alpha_mock.faults.clear()
     return result
+
+
+def _ambiguous_write(guarded: bool) -> Callable[[Tour], RunResult]:
+    name = f"replay_ambiguous_write_{'resolved' if guarded else 'unguarded'}"
+
+    def run(tour: Tour) -> RunResult:
+        tour.alpha_mock.faults.set("slow_commit", "12")
+        capability = tour.open_share_guarded if guarded else tour.open_share
+        result = tour.replay(name, capability, tour.alpha, SHARE_INPUTS,
+                             operator=ScriptedOperator(ControlLease()), attended=True)
+        tour.alpha_mock.faults.clear()
+        return result
+
+    return run
 
 
 def _with_fault(name: str, fault: str, value: str | None = None, **kw) -> Callable[[Tour], RunResult]:
@@ -180,6 +195,12 @@ def scenarios() -> list[Scenario]:
                  "Attended run, operator approves, the confirmation number comes back as a typed output.",
                  lambda t: t.replay("replay_irreversible_after_approval", t.open_share, t.alpha, SHARE_INPUTS,
                                     operator=ScriptedOperator(ControlLease()), attended=True)),
+        Scenario("replay_ambiguous_write_unguarded", "A lost response after a commit, with no duplicate guard",
+                 "The write did land. Replay cannot prove it, so it fails and reports the write as "
+                 "possible rather than claiming nothing happened.", _ambiguous_write(guarded=False)),
+        Scenario("replay_ambiguous_write_resolved", "The same lost response, with a duplicate guard",
+                 "The step declares evidence that the work landed, so replay reconciles instead of "
+                 "retrying: one posting, confirmation returned.", _ambiguous_write(guarded=True)),
         Scenario("tenant_beta_without_overlay", "A second tenant, reworded, without its overlay",
                  "The brittle fallback matches the wrong control (rank 1) and the step's own check catches it.",
                  lambda t: t.replay("tenant_beta_without_overlay", t.balance, t.beta, {"member_number": "100234"})),
@@ -206,6 +227,7 @@ def run_tour(browser: Browser, config_dir: Path, capabilities_dir: Path, runs_ro
         alpha_mock=alpha_mock, beta_mock=beta_mock,
         balance=load("member.savings_balance.lookup/1.0.0.json"),
         open_share=load("member.share_account.open/1.0.0.json"),
+        open_share_guarded=load("member.share_account.open/1.1.0.json"),
         runs_root=runs_root, video_for=video_for,
     )
     try:

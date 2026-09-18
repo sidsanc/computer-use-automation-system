@@ -5,12 +5,14 @@ versioned **capability artifact**. After that the artifact **replays determinist
 in the loop**, behind a policy gate, with a real path to hand the live session to a human.
 
 ```
-goal + contract ──► discovery (Claude drives the UI)  ──► capability artifact ──► replay (no model)
-                         │                                      │                      │
-                    policy gate                      locators verified live      typed result:
-                    human approval                   no run values kept          success | business
-                                                                                  outcome | needs_human
-                                                                                  | policy_blocked | failure
+goal + contract ──► discovery (Claude drives the UI) ──► capability artifact ──► replay (no model)
+                         │                                      │                      ▲      │
+                    policy gate                      locators verified live            │      │
+                    human approval                   no run values kept                │      ▼
+                                                                          an AI agent calls   typed result:
+                                                                          it by name from     success | business
+                                                                          the catalogue       outcome | needs_human
+                                                                                              | policy_blocked | failure
 ```
 
 The target is a deliberately legacy app included in this repo (`mockbank/`): framesets, table
@@ -90,6 +92,11 @@ uv run cua replay member.savings_balance.lookup@1.0.0 --tenant cu_alpha -p membe
 uv run cua serve-mock --variant b --port 5002
 uv run cua replay member.savings_balance.lookup@1.0.0 --tenant cu_beta -p member_number=100234 --no-overlay
 uv run cua replay member.savings_balance.lookup@1.0.0 --tenant cu_beta -p member_number=100234
+
+# 9. the production shape: an AI agent reads the catalogue and calls a capability by name
+uv run cua catalog --tools
+uv run cua ask "What is the current savings balance for member 100871?" --tenant cu_alpha
+uv run cua ask "Please read out the savings balance for member 999999." --tenant cu_alpha
 ```
 
 Exit codes: `0` success · `10` business outcome · `20` needs human · `30` blocked by policy · `40` failure.
@@ -104,6 +111,8 @@ Test members: `100234`, `100871` (active), `100555` (restricted), `999999` (not 
 | `cua faults set\|clear\|show` | Inject runtime faults: `session_expired`, `maintenance_notice`, `unknown_dialog`, `slow_load`, `server_error`. |
 | `cua discover GOAL.yaml --tenant T -p k=v` | LLM discovery, then a verification replay. `--attended` opens the operator console. |
 | `cua replay ID@VERSION --tenant T -p k=v` | Deterministic replay. `--attended`, `--allow-irreversible`, `--trace`, `--video`, `--no-overlay`. |
+| `cua catalog [--tools]` | The capabilities an agent can call, as typed contracts or tool definitions. |
+| `cua ask "..." --tenant T` | Act as the calling agent: choose a capability for the request, invoke it, answer. |
 | `cua demo` | The narrated tour of every replay behaviour. `--headed`, `--video`. |
 | `cua schema` | Regenerate the JSON Schemas in `schemas/`. |
 

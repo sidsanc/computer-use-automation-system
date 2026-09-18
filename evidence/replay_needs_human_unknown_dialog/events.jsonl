@@ -1,33 +1,33 @@
-{"seq": 1, "ts": "2026-09-18T22:18:47.904173+00:00", "type": "run_started", "capability": {"id": "member.savings_balance.lookup", "version": "1.0.0", "resolved_hash": "37cdad42abae83e4", "overlay": null}, "tenant": "cu_alpha", "inputs": {"member_number": "[pii]"}, "attended": false, "allow_irreversible": false}
-{"seq": 2, "ts": "2026-09-18T22:18:47.952148+00:00", "type": "navigated", "path": "/login"}
-{"seq": 3, "ts": "2026-09-18T22:18:47.952148+00:00", "type": "step_started", "step_id": "s01_fill_operator_id", "intent": "Enter the operator ID", "action": "fill"}
-{"seq": 4, "ts": "2026-09-18T22:18:47.984027+00:00", "type": "policy_decision", "step_id": "s01_fill_operator_id", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
-{"seq": 5, "ts": "2026-09-18T22:18:47.989387+00:00", "type": "action_performed", "step_id": "s01_fill_operator_id", "action": "fill", "risk": "read", "locator_rank": null}
-{"seq": 6, "ts": "2026-09-18T22:18:47.995067+00:00", "type": "step_completed", "step_id": "s01_fill_operator_id"}
-{"seq": 7, "ts": "2026-09-18T22:18:47.995067+00:00", "type": "step_started", "step_id": "s02_fill_password", "intent": "Enter the operator password", "action": "fill"}
-{"seq": 8, "ts": "2026-09-18T22:18:48.006134+00:00", "type": "policy_decision", "step_id": "s02_fill_password", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
-{"seq": 9, "ts": "2026-09-18T22:18:48.010646+00:00", "type": "action_performed", "step_id": "s02_fill_password", "action": "fill", "risk": "read", "locator_rank": null}
-{"seq": 10, "ts": "2026-09-18T22:18:48.016706+00:00", "type": "step_completed", "step_id": "s02_fill_password"}
-{"seq": 11, "ts": "2026-09-18T22:18:48.016706+00:00", "type": "step_started", "step_id": "s03_sign_on", "intent": "Submit the sign-on form", "action": "click"}
-{"seq": 12, "ts": "2026-09-18T22:18:48.030342+00:00", "type": "policy_decision", "step_id": "s03_sign_on", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "POST to a route known to be read-only"}
-{"seq": 13, "ts": "2026-09-18T22:18:48.081007+00:00", "type": "action_performed", "step_id": "s03_sign_on", "action": "click", "risk": "navigation", "locator_rank": null}
-{"seq": 14, "ts": "2026-09-18T22:18:48.130946+00:00", "type": "step_completed", "step_id": "s03_sign_on"}
-{"seq": 15, "ts": "2026-09-18T22:18:48.149613+00:00", "type": "signed_on"}
-{"seq": 16, "ts": "2026-09-18T22:18:48.169485+00:00", "type": "navigated", "path": "/teller"}
-{"seq": 17, "ts": "2026-09-18T22:18:48.173959+00:00", "type": "app_fingerprint", "version": "7.2.4", "required": ">=7.2,<8"}
-{"seq": 18, "ts": "2026-09-18T22:18:48.173959+00:00", "type": "step_started", "step_id": "s01_open_member_inquiry_from_main_menu", "intent": "Open Member Inquiry from main menu", "action": "click"}
-{"seq": 19, "ts": "2026-09-18T22:18:48.229464+00:00", "type": "policy_decision", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "GET navigation"}
-{"seq": 20, "ts": "2026-09-18T22:18:48.267704+00:00", "type": "action_performed", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "risk": "navigation", "locator_rank": 0}
-{"seq": 21, "ts": "2026-09-18T22:18:48.294501+00:00", "type": "step_completed", "step_id": "s01_open_member_inquiry_from_main_menu"}
-{"seq": 22, "ts": "2026-09-18T22:18:48.294501+00:00", "type": "step_started", "step_id": "s02_enter_the_member_number_in_the_search_fi", "intent": "Enter the member number in the search field", "action": "fill"}
-{"seq": 23, "ts": "2026-09-18T22:18:48.328053+00:00", "type": "policy_decision", "step_id": "s02_enter_the_member_number_in_the_search_fi", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
-{"seq": 24, "ts": "2026-09-18T22:18:48.332838+00:00", "type": "action_performed", "step_id": "s02_enter_the_member_number_in_the_search_fi", "action": "fill", "risk": "read", "locator_rank": 0}
-{"seq": 25, "ts": "2026-09-18T22:18:48.352908+00:00", "type": "step_completed", "step_id": "s02_enter_the_member_number_in_the_search_fi"}
-{"seq": 26, "ts": "2026-09-18T22:18:48.352908+00:00", "type": "step_started", "step_id": "s03_submit_the_member_search", "intent": "Submit the member search", "action": "click"}
-{"seq": 27, "ts": "2026-09-18T22:18:48.378490+00:00", "type": "policy_decision", "step_id": "s03_submit_the_member_search", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "POST to a route known to be read-only"}
-{"seq": 28, "ts": "2026-09-18T22:18:48.410690+00:00", "type": "action_performed", "step_id": "s03_submit_the_member_search", "action": "click", "risk": "navigation", "locator_rank": 0}
-{"seq": 29, "ts": "2026-09-18T22:18:48.453466+00:00", "type": "unknown_dialog", "step_id": "s03_submit_the_member_search", "dialogs": ["Compliance Review"]}
-{"seq": 30, "ts": "2026-09-18T22:18:48.490468+00:00", "type": "attachment", "name": "interventions/5bbb7417cf.png", "bytes": 27960, "masking": "blackout:5"}
-{"seq": 31, "ts": "2026-09-18T22:18:48.570907+00:00", "type": "intervention_requested", "intervention_id": "5bbb7417cf", "reason_code": "unknown_dialog", "step_id": "s03_submit_the_member_search"}
-{"seq": 32, "ts": "2026-09-18T22:18:48.570907+00:00", "type": "intervention_resolved", "intervention_id": "5bbb7417cf", "decision": "unavailable", "operator": null, "actions": []}
-{"seq": 33, "ts": "2026-09-18T22:18:48.575920+00:00", "type": "run_finished", "status": "needs_human", "exit_code": 20, "duration_ms": 672}
+{"seq": 1, "ts": "2026-09-18T22:54:02.902906+00:00", "type": "run_started", "capability": {"id": "member.savings_balance.lookup", "version": "1.0.0", "resolved_hash": "63172b5d5d6f6a15", "overlay": null}, "tenant": "cu_alpha", "inputs": {"member_number": "[pii]"}, "attended": false, "allow_irreversible": false}
+{"seq": 2, "ts": "2026-09-18T22:54:02.945829+00:00", "type": "navigated", "path": "/login"}
+{"seq": 3, "ts": "2026-09-18T22:54:02.945829+00:00", "type": "step_started", "step_id": "s01_fill_operator_id", "intent": "Enter the operator ID", "action": "fill"}
+{"seq": 4, "ts": "2026-09-18T22:54:02.976002+00:00", "type": "policy_decision", "step_id": "s01_fill_operator_id", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
+{"seq": 5, "ts": "2026-09-18T22:54:02.979634+00:00", "type": "action_performed", "step_id": "s01_fill_operator_id", "action": "fill", "risk": "read", "locator_rank": null}
+{"seq": 6, "ts": "2026-09-18T22:54:02.985464+00:00", "type": "step_completed", "step_id": "s01_fill_operator_id"}
+{"seq": 7, "ts": "2026-09-18T22:54:02.985464+00:00", "type": "step_started", "step_id": "s02_fill_password", "intent": "Enter the operator password", "action": "fill"}
+{"seq": 8, "ts": "2026-09-18T22:54:02.995983+00:00", "type": "policy_decision", "step_id": "s02_fill_password", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
+{"seq": 9, "ts": "2026-09-18T22:54:02.998487+00:00", "type": "action_performed", "step_id": "s02_fill_password", "action": "fill", "risk": "read", "locator_rank": null}
+{"seq": 10, "ts": "2026-09-18T22:54:03.004068+00:00", "type": "step_completed", "step_id": "s02_fill_password"}
+{"seq": 11, "ts": "2026-09-18T22:54:03.004068+00:00", "type": "step_started", "step_id": "s03_sign_on", "intent": "Submit the sign-on form", "action": "click"}
+{"seq": 12, "ts": "2026-09-18T22:54:03.015093+00:00", "type": "policy_decision", "step_id": "s03_sign_on", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "POST to a route known to be read-only"}
+{"seq": 13, "ts": "2026-09-18T22:54:03.065147+00:00", "type": "action_performed", "step_id": "s03_sign_on", "action": "click", "risk": "navigation", "locator_rank": null}
+{"seq": 14, "ts": "2026-09-18T22:54:03.115405+00:00", "type": "step_completed", "step_id": "s03_sign_on"}
+{"seq": 15, "ts": "2026-09-18T22:54:03.131834+00:00", "type": "signed_on"}
+{"seq": 16, "ts": "2026-09-18T22:54:03.148961+00:00", "type": "navigated", "path": "/teller"}
+{"seq": 17, "ts": "2026-09-18T22:54:03.153009+00:00", "type": "app_fingerprint", "version": "7.2.4", "required": ">=7.2,<8"}
+{"seq": 18, "ts": "2026-09-18T22:54:03.153009+00:00", "type": "step_started", "step_id": "s01_open_member_inquiry_from_main_menu", "intent": "Open Member Inquiry from main menu", "action": "click"}
+{"seq": 19, "ts": "2026-09-18T22:54:03.206983+00:00", "type": "policy_decision", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "GET navigation"}
+{"seq": 20, "ts": "2026-09-18T22:54:03.236859+00:00", "type": "action_performed", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "risk": "navigation", "locator_rank": 0}
+{"seq": 21, "ts": "2026-09-18T22:54:03.263774+00:00", "type": "step_completed", "step_id": "s01_open_member_inquiry_from_main_menu"}
+{"seq": 22, "ts": "2026-09-18T22:54:03.263774+00:00", "type": "step_started", "step_id": "s02_enter_the_member_number_in_the_search_fi", "intent": "Enter the member number in the search field", "action": "fill"}
+{"seq": 23, "ts": "2026-09-18T22:54:03.294915+00:00", "type": "policy_decision", "step_id": "s02_enter_the_member_number_in_the_search_fi", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
+{"seq": 24, "ts": "2026-09-18T22:54:03.297912+00:00", "type": "action_performed", "step_id": "s02_enter_the_member_number_in_the_search_fi", "action": "fill", "risk": "read", "locator_rank": 0}
+{"seq": 25, "ts": "2026-09-18T22:54:03.315638+00:00", "type": "step_completed", "step_id": "s02_enter_the_member_number_in_the_search_fi"}
+{"seq": 26, "ts": "2026-09-18T22:54:03.315638+00:00", "type": "step_started", "step_id": "s03_submit_the_member_search", "intent": "Submit the member search", "action": "click"}
+{"seq": 27, "ts": "2026-09-18T22:54:03.337419+00:00", "type": "policy_decision", "step_id": "s03_submit_the_member_search", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "POST to a route known to be read-only"}
+{"seq": 28, "ts": "2026-09-18T22:54:03.345762+00:00", "type": "action_performed", "step_id": "s03_submit_the_member_search", "action": "click", "risk": "navigation", "locator_rank": 0}
+{"seq": 29, "ts": "2026-09-18T22:54:03.381725+00:00", "type": "unknown_dialog", "step_id": "s03_submit_the_member_search", "dialogs": ["Compliance Review"]}
+{"seq": 30, "ts": "2026-09-18T22:54:03.421874+00:00", "type": "attachment", "name": "interventions/846b1c47c7.png", "bytes": 27960, "masking": "blackout:5"}
+{"seq": 31, "ts": "2026-09-18T22:54:03.487236+00:00", "type": "intervention_requested", "intervention_id": "846b1c47c7", "reason_code": "unknown_dialog", "step_id": "s03_submit_the_member_search"}
+{"seq": 32, "ts": "2026-09-18T22:54:03.487236+00:00", "type": "intervention_resolved", "intervention_id": "846b1c47c7", "decision": "unavailable", "operator": null, "actions": []}
+{"seq": 33, "ts": "2026-09-18T22:54:03.491150+00:00", "type": "run_finished", "status": "needs_human", "exit_code": 20, "duration_ms": 578}

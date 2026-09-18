@@ -320,6 +320,58 @@
       "title": "Handler",
       "type": "object"
     },
+    "Idempotency": {
+      "additionalProperties": false,
+      "description": "How to tell that this write already happened.\n\nA timeout is not proof that nothing happened: the request may have reached the core while the\nresponse was lost. Rather than guess, a write step can declare observable evidence that the work\nlanded. Replay checks it before dispatching (so a retry cannot double-post) and again when the\npostcondition times out, turning an ambiguous write into a decided one.",
+      "properties": {
+        "evidence": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "dialog_present": "#/$defs/DialogPresent",
+                "element_present": "#/$defs/ElementPresent",
+                "field_value": "#/$defs/FieldValue",
+                "frame_url": "#/$defs/FrameUrl",
+                "text_visible": "#/$defs/TextVisible"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/TextVisible"
+              },
+              {
+                "$ref": "#/$defs/ElementPresent"
+              },
+              {
+                "$ref": "#/$defs/FieldValue"
+              },
+              {
+                "$ref": "#/$defs/FrameUrl"
+              },
+              {
+                "$ref": "#/$defs/DialogPresent"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "timeout_s": {
+          "default": 15,
+          "exclusiveMinimum": 0,
+          "maximum": 120,
+          "title": "Timeout S",
+          "type": "number"
+        }
+      },
+      "required": [
+        "evidence"
+      ],
+      "title": "Idempotency",
+      "type": "object"
+    },
     "InputRef": {
       "additionalProperties": false,
       "properties": {
@@ -641,6 +693,19 @@
           ],
           "default": null,
           "title": "Transcript Ref"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Why a human changed the recorded flow, if they did.",
+          "title": "Notes"
         }
       },
       "required": [
@@ -951,6 +1016,17 @@
           },
           "title": "Handlers",
           "type": "array"
+        },
+        "idempotency": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Idempotency"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "performed_by": {
           "default": "automation",

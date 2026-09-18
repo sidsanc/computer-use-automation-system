@@ -1,0 +1,16 @@
+{
+  "request": "Please read out the savings balance for member 999999.",
+  "model": "claude-sonnet-5",
+  "capability_called": "member_savings_balance_lookup",
+  "arguments": {
+    "member_number": "999999"
+  },
+  "result_to_agent": {
+    "status": "business_outcome",
+    "outcome": {
+      "code": "member_not_found",
+      "message": "No member exists with that number."
+    }
+  },
+  "answer": "No member exists with the number 999999, so I couldn't retrieve a savings balance for that account."
+}

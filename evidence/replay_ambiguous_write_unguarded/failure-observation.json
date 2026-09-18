@@ -1,0 +1,517 @@
+{
+  "observation_id": "6827bb2e",
+  "title": "CU Teller - Alpha Community Credit Union",
+  "frames": [
+    {
+      "path": [],
+      "url": "http://127.0.0.1:63542/teller"
+    },
+    {
+      "path": [
+        "nav"
+      ],
+      "url": "http://127.0.0.1:63542/teller/nav"
+    },
+    {
+      "path": [
+        "main"
+      ],
+      "url": "http://127.0.0.1:63542/teller/member/[pii]/open-share"
+    }
+  ],
+  "nodes": [
+    {
+      "eid": "e2",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "MAIN MENU",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 13
+    },
+    {
+      "eid": "e3",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Teller Home",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 17
+    },
+    {
+      "eid": "e7",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Teller Home",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 18
+    },
+    {
+      "eid": "e4",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Member Inquiry",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 22
+    },
+    {
+      "eid": "e8",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Member Inquiry",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 23
+    },
+    {
+      "eid": "e5",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Reports",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 3,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 27
+    },
+    {
+      "eid": "e9",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Reports",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 3,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 28
+    },
+    {
+      "eid": "e6",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Sign Off",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 4,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 32
+    },
+    {
+      "eid": "e10",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Sign Off",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 4,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 33
+    },
+    {
+      "eid": null,
+      "frame_path": [
+        "nav"
+      ],
+      "role": "StaticText",
+      "name": "PAUSED — waiting for an operator",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": null,
+      "has_control": false,
+      "order": 38
+    },
+    {
+      "eid": "e12",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Alpha Community Credit Union :: Review New Share",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 16
+    },
+    {
+      "eid": "e14",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "REVIEW - THIS ACTION POSTS TO THE CORE",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 32
+    },
+    {
+      "eid": "e15",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Member Number:",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 36
+    },
+    {
+      "eid": "e16",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "[pii]",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 1,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 38
+    },
+    {
+      "eid": "e17",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Share Type:",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 42
+    },
+    {
+      "eid": "e18",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Holiday Club",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 2,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 44
+    },
+    {
+      "eid": "e19",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Initial Deposit:",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 3,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 48
+    },
+    {
+      "eid": "e20",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "$25.00",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 3,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 50
+    },
+    {
+      "eid": "e21",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "",
+      "name_source": "none",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 4,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 54
+    },
+    {
+      "eid": "e22",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Confirm Cancel",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 4,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 55
+    },
+    {
+      "eid": "e23",
+      "frame_path": [
+        "main"
+      ],
+      "role": "button",
+      "name": "Confirm",
+      "name_source": "native",
+      "value": "Confirm",
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 4,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 57
+    },
+    {
+      "eid": "e24",
+      "frame_path": [
+        "main"
+      ],
+      "role": "link",
+      "name": "Cancel",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 4,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 59
+    },
+    {
+      "eid": "e13",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "CU Teller v7.2.4 © Legacy Core Systems",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 71
+    },
+    {
+      "eid": null,
+      "frame_path": [
+        "main"
+      ],
+      "role": "StaticText",
+      "name": "PAUSED — waiting for an operator",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": null,
+      "has_control": false,
+      "order": 75
+    }
+  ],
+  "unavailable_frames": []
+}

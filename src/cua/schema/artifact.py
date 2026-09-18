@@ -86,6 +86,19 @@ class Handler(Strict):
         return self
 
 
+class Idempotency(Strict):
+    """How to tell that this write already happened.
+
+    A timeout is not proof that nothing happened: the request may have reached the core while the
+    response was lost. Rather than guess, a write step can declare observable evidence that the work
+    landed. Replay checks it before dispatching (so a retry cannot double-post) and again when the
+    postcondition times out, turning an ambiguous write into a decided one.
+    """
+
+    evidence: tuple[Condition, ...] = Field(min_length=1)
+    timeout_s: float = Field(default=15, gt=0, le=120)
+
+
 class Step(Strict):
     id: str = Field(pattern=r"^s\d{2}_[a-z0-9_]+$")
     intent: str = Field(min_length=1)
@@ -97,6 +110,7 @@ class Step(Strict):
     irreversible: bool = False
     timeout_s: float = Field(default=10, gt=0, le=60)
     handlers: tuple[Handler, ...] = ()
+    idempotency: Idempotency | None = None
     performed_by: Literal["automation", "human"] = "automation"
 
     @model_validator(mode="after")
@@ -111,6 +125,8 @@ class Step(Strict):
             raise ValueError(f"step {self.id}: only write steps can be irreversible")
         if self.action.kind == "wait_for" and not self.post:
             raise ValueError(f"step {self.id}: wait_for needs postconditions to wait for")
+        if self.idempotency is not None and self.effect != "write":
+            raise ValueError(f"step {self.id}: a duplicate guard only makes sense on a write step")
         return self
 
 
@@ -138,6 +154,7 @@ class Provenance(Strict):
     step_count: int | None = None
     token_usage: TokenUsage | None = None
     transcript_ref: str | None = None
+    notes: str | None = Field(default=None, description="Why a human changed the recorded flow, if they did.")
 
 
 class Capability(Strict):

@@ -57,6 +57,7 @@ from cua.tenancy.overlay import apply as apply_overlay
 
 PRECEDENCE = {"escalate": 0, "hard_failure": 1, "business_outcome": 2, "recoverable": 3}
 POLL_MS = 200
+MAX_APPROVAL_REQUESTS = 2
 
 
 @dataclass
@@ -367,6 +368,13 @@ class ReplayEngine:
         if decision.risk == "irreversible" and not step.irreversible:
             log.event("risk_upgraded", step_id=step.id, declared=step.effect, policy=decision.risk)
 
+        if writes and step.idempotency and self._already_done(run, step):
+            # The work is already on the screen: dispatching again would post it twice.
+            log.event("write_skipped_already_done", step_id=step.id)
+            run.committed.append(CommittedEffect(step_id=step.id, actor="automation"))
+            log.event("step_completed", step_id=step.id)
+            return
+
         if writes:
             run.possible.append(step.id)
         value = None
@@ -394,11 +402,35 @@ class ReplayEngine:
                     str(exc))) from None
             log.event("output_extracted", step_id=step.id, output=name)
 
-        self._await(run, step, handlers, step.post, time.monotonic() + step.timeout_s, phase="post")
+        try:
+            self._await(run, step, handlers, step.post, time.monotonic() + step.timeout_s, phase="post")
+        except _Terminal as timeout:
+            if not (writes and step.idempotency and timeout.payload.get("failure")):
+                raise
+            # The response may have been lost after the core accepted the write. Look for evidence
+            # rather than reporting "maybe" or blindly retrying.
+            if not self._already_done(run, step, wait=True):
+                run.log.event("ambiguous_write_unresolved", step_id=step.id)
+                raise _Terminal("failure", failure=self._failure(
+                    run, "ambiguous_write", step.id, "confirmation that the write completed",
+                    "the write was dispatched and neither its postcondition nor its duplicate-guard "
+                    "evidence appeared; the caller must reconcile before retrying")) from None
+            run.log.event("ambiguous_write_resolved", step_id=step.id)
         if writes:
             run.possible.remove(step.id)
             run.committed.append(CommittedEffect(step_id=step.id, actor="automation"))
         log.event("step_completed", step_id=step.id)
+
+    def _already_done(self, run: _Run, step: Step, wait: bool = False) -> bool:
+        """Is this write's evidence on screen? Optionally wait for it, for a response still in flight."""
+        guard = step.idempotency
+        deadline = time.monotonic() + (guard.timeout_s if wait else 0)
+        while True:
+            if all(run.surface.check(c, run.render, run.value_of) for c in guard.evidence):
+                return True
+            if time.monotonic() >= deadline:
+                return False
+            run.session.page.wait_for_timeout(POLL_MS)
 
     def _gate(self, run: _Run, step: Step | None, kind: str, info: ActionInfo) -> Decision:
         step_id = step.id if step else None
@@ -416,6 +448,13 @@ class ReplayEngine:
             raise _Terminal("policy_blocked", policy=PolicyDecision(rule=decision.rule, step_id=step_id,
                                                                     reason=decision.reason))
         if decision.verdict == "require_approval":
+            # An operator who takes control instead of approving lands back on this step, so cap the
+            # round trips rather than pausing forever.
+            run.attempts[f"approval:{step_id}"] += 1
+            if run.attempts[f"approval:{step_id}"] > MAX_APPROVAL_REQUESTS:
+                raise _Terminal("policy_blocked", policy=PolicyDecision(
+                    rule="approval_not_granted", step_id=step_id,
+                    reason=f"the step was offered for approval {MAX_APPROVAL_REQUESTS} times without being approved"))
             self._ask_human(run, step, "approval_required", decision.reason, ("approve", "deny", "abort"))
         return decision
 

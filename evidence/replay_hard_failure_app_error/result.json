@@ -1,10 +1,10 @@
 {
-  "run_id": "e0331c240fde",
+  "run_id": "10d92374375b",
   "status": "failure",
   "capability": {
     "id": "member.savings_balance.lookup",
     "version": "1.0.0",
-    "resolved_hash": "37cdad42abae83e4",
+    "resolved_hash": "63172b5d5d6f6a15",
     "overlay": null
   },
   "tenant": "cu_alpha",
@@ -39,7 +39,7 @@
     "committed": [],
     "possible": []
   },
-  "started_at": "2026-09-18T22:18:46.769213Z",
-  "duration_ms": 1094,
-  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T221846Z_replay_e0331c240fde"
+  "started_at": "2026-09-18T22:54:01.910939Z",
+  "duration_ms": 967,
+  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T225401Z_replay_10d92374375b"
 }
