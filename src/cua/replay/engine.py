@@ -26,6 +26,9 @@ from playwright.sync_api import Error as PlaywrightError
 
 from cua.config import AppProfile, TenantConfig
 from cua.evidence.log import EvidenceLog
+from cua.handoff.capture import HumanCapture
+from cua.handoff.console import SessionOps
+from cua.handoff.control import ControlLease
 from cua.handoff.gate import HumanGate, HumanResolution, InterventionRequest, ReasonCode, UnattendedGate
 from cua.policy.gate import ActionContext, Decision, Policy, evaluate, url_allowed
 from cua.policy.redact import Redactor
@@ -75,6 +78,14 @@ class _Restart(Exception):
     pass
 
 
+class _ResumeAt(Exception):
+    """Raised after a human hands control back: continue from the step the screen actually supports."""
+
+    def __init__(self, index: int) -> None:
+        super().__init__(index)
+        self.index = index
+
+
 @dataclass
 class _Run:
     run_id: str
@@ -98,6 +109,9 @@ class _Run:
     attempts: Counter = field(default_factory=Counter)
     committed: list[CommittedEffect] = field(default_factory=list)
     possible: list[str] = field(default_factory=list)
+    lease: ControlLease = field(default_factory=ControlLease)
+    capture: HumanCapture | None = None
+    current_index: int = 0
 
     @property
     def surface(self):
@@ -152,6 +166,7 @@ class ReplayEngine:
             run_id=run_id, capability=capability, tenant=tenant, app=app,
             policy=app.policy.for_tenant(tenant.base, tenant.policy), options=options, log=log,
             redactor=redactor, raw_inputs=inputs, started_at=datetime.now(UTC), t0=time.monotonic(),
+            lease=getattr(self.gate, "lease", None) or ControlLease(),
         )
         log.event("run_started", capability=self._ref(capability), tenant=tenant.tenant_id,
                   inputs=self._display_inputs(run), attended=options.attended,
@@ -164,6 +179,7 @@ class ReplayEngine:
                 redactor.add_secret(run.secrets[name])
             video_dir = log.dir / "video" if options.video else None
             run.session = WebSession(self.browser, run.policy.allowed_origins, video_dir=video_dir, trace=options.trace)
+            self._wire_handoff(run)
             self._execute(run)
             missing = [name for name in capability.outputs if name not in run.outputs]
             if missing:
@@ -189,6 +205,29 @@ class ReplayEngine:
         log.close()
         return result
 
+    def _wire_handoff(self, run: _Run) -> None:
+        """Give the session a control lease, and the gate a way to work with it while it waits."""
+        run.lease.on_change = lambda t: run.log.event(
+            "control_transition", **{"from": t.frm, "to": t.to, "actor": t.actor, "note": t.note})
+        run.surface.lease = run.lease
+        if not hasattr(self.gate, "attach"):
+            return
+        run.capture = HumanCapture(run.session.context, run.lease, lambda action, holder: run.log.event(
+            "human_action" if holder == "human" else "input_while_automation_held_control",
+            kind=action.kind, control=action.control, value=action.value, frame=action.frame_path))
+        page = run.session.page
+
+        def screenshot() -> bytes | None:
+            try:
+                png, _ = run.surface.screenshot_masked(list(run.app.sensitive_captions), run.pii_values())
+                return png
+            except PlaywrightError:
+                return None
+
+        self.gate.attach(SessionOps(pump=lambda ms: page.wait_for_timeout(ms), screenshot=screenshot,
+                                    announce=lambda: run.capture.announce(page), capture=run.capture,
+                                    surface=run.surface), run.log)
+
     def _close(self, run: _Run, keep_trace: bool) -> None:
         if run.session is None:
             return
@@ -210,8 +249,21 @@ class ReplayEngine:
                 self._sign_on(run)
                 self._goto(run, run.capability.entry.path)
                 self._check_version(run)
-                for step in run.capability.steps:
-                    self._run_step(run, step, self._handlers(run, step))
+                steps = run.capability.steps
+                run.current_index = 0
+                while run.current_index < len(steps):
+                    step = steps[run.current_index]
+                    try:
+                        self._run_step(run, step, self._handlers(run, step))
+                    except _ResumeAt as resume:
+                        run.current_index = resume.index
+                        run.lease.to("automation", "automation", note="resume verified against the live screen")
+                        if run.capture is not None:
+                            run.capture.announce(run.session.page)
+                        run.log.event("resumed_after_human", step_index=resume.index,
+                                      step_id=steps[resume.index].id if resume.index < len(steps) else None)
+                        continue
+                    run.current_index += 1
                 self._await(run, None, self._handlers(run, None), run.capability.success,
                             time.monotonic() + run.options.success_timeout_s, phase="success")
                 run.log.event("success_verified")
@@ -480,7 +532,23 @@ class ReplayEngine:
         if resolution.decision in ("denied", "aborted"):
             raise _Terminal("policy_blocked", policy=PolicyDecision(
                 rule=f"operator_{resolution.decision}", step_id=request.step_id, reason=resolution.note or reason))
+        if resolution.decision == "resumed":
+            if any(a.kind in ("click", "submit", "press_key") for a in resolution.actions):
+                run.committed.append(CommittedEffect(step_id=step.id if step else "(during handoff)", actor="human"))
+            raise _ResumeAt(self._resume_index(run))
         return resolution
+
+    def _resume_index(self, run: _Run) -> int:
+        """Trust the screen, not the step counter: skip the steps whose postconditions already hold."""
+        steps = run.capability.steps
+        index = run.current_index
+        while index < len(steps):
+            post = steps[index].post
+            if not post or not all(run.surface.check(c, run.render, run.value_of) for c in post):
+                break
+            run.log.event("step_satisfied_by_human", step_id=steps[index].id)
+            index += 1
+        return index
 
     def _capture(self, run: _Run, prefix: str) -> tuple[str | None, str | None]:
         if run.session is None:
@@ -529,6 +597,10 @@ class ReplayEngine:
             run_id=run.run_id, status=status, capability=self._ref(run.capability), tenant=run.tenant.tenant_id,
             app_version=run.app_version, inputs=self._display_inputs(run),
             recoveries_applied=tuple(run.recoveries), locator_ranks=dict(run.ranks),
+            human_actions=tuple(run.capture.actions) if run.capture else (),
+            control_transitions=tuple(
+                {"at": t.at.isoformat(), "from": t.frm, "to": t.to, "actor": t.actor, "note": t.note or ""}
+                for t in run.lease.history),
             side_effects=SideEffects(committed=tuple(run.committed), possible=tuple(run.possible)),
             started_at=run.started_at, duration_ms=int((time.monotonic() - run.t0) * 1000),
             evidence_dir=run.log.dir.as_posix(), **payload,

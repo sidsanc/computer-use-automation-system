@@ -115,6 +115,51 @@
       "title": "Failure",
       "type": "object"
     },
+    "HumanAction": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "frame_path": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Frame Path",
+          "type": "array"
+        },
+        "control": {
+          "title": "Control",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "frame_path",
+        "control",
+        "at"
+      ],
+      "title": "HumanAction",
+      "type": "object"
+    },
     "InterventionRef": {
       "additionalProperties": false,
       "properties": {
@@ -368,6 +413,25 @@
         "$ref": "#/$defs/RecoveryRecord"
       },
       "title": "Recoveries Applied",
+      "type": "array"
+    },
+    "human_actions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/HumanAction"
+      },
+      "title": "Human Actions",
+      "type": "array"
+    },
+    "control_transitions": {
+      "default": [],
+      "items": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "type": "object"
+      },
+      "title": "Control Transitions",
       "type": "array"
     },
     "locator_ranks": {

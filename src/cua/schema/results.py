@@ -11,6 +11,7 @@ from typing import Any, Literal
 
 from pydantic import Field, model_validator
 
+from cua.handoff.gate import HumanAction
 from cua.schema.artifact import Capability, InputSpec
 from cua.schema.base import Strict
 
@@ -99,6 +100,8 @@ class RunResult(Strict):
     policy: PolicyDecision | None = None
     intervention: InterventionRef | None = None
     recoveries_applied: tuple[RecoveryRecord, ...] = ()
+    human_actions: tuple[HumanAction, ...] = ()
+    control_transitions: tuple[dict[str, str], ...] = ()
     locator_ranks: dict[str, int] = {}
     side_effects: SideEffects = SideEffects()
     started_at: datetime

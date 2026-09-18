@@ -26,6 +26,9 @@ from cua.discovery.goal import GoalSpec
 from cua.discovery.llm import ModelClient, ToolCall
 from cua.discovery.recorder import RecordedAction, RecordingError, RunFacts, build_capability, next_version, save
 from cua.evidence.log import EvidenceLog
+from cua.handoff.capture import HumanCapture
+from cua.handoff.console import SessionOps
+from cua.handoff.control import ControlLease
 from cua.handoff.gate import HumanGate, InterventionRequest, ReasonCode, UnattendedGate
 from cua.policy.gate import ActionContext, Decision, Policy, evaluate, url_allowed
 from cua.policy.redact import Redactor
@@ -116,6 +119,8 @@ class _Ctx:
     extracted: dict[str, str] = field(default_factory=dict)
     usage: dict[str, int] = field(default_factory=lambda: {"input": 0, "output": 0, "cache_read": 0})
     served_models: set[str] = field(default_factory=set)
+    lease: ControlLease = field(default_factory=ControlLease)
+    capture: HumanCapture | None = None
 
     @property
     def surface(self):
@@ -187,7 +192,7 @@ class DiscoveryAgent:
         log = EvidenceLog(options.evidence_root, run_id, "discovery", redactor)
         ctx = _Ctx(run_id=run_id, goal=goal, tenant=tenant, app=app,
                    policy=app.policy.for_tenant(tenant.base, tenant.policy), inputs={}, secrets={}, log=log,
-                   redactor=redactor, options=options)
+                   redactor=redactor, options=options, lease=getattr(self.gate, "lease", None) or ControlLease())
         tools = tool_definitions(goal)
         log.event("discovery_started", goal=goal.goal, capability_id=goal.capability_id, tenant=tenant.tenant_id,
                   model=self.model.model_id, prompt_template_hash=prompt_template_hash(tools),
@@ -201,6 +206,7 @@ class DiscoveryAgent:
                 redactor.add_secret(ctx.secrets[name])
             ctx.session = WebSession(self.browser, ctx.policy.allowed_origins,
                                      video_dir=log.dir / "video" if options.video else None)
+            self._wire_handoff(ctx)
             self._sign_on(ctx)
             entry_frames = self._enter(ctx)
             turns = self._loop(ctx, tools)
@@ -228,6 +234,28 @@ class DiscoveryAgent:
         return result
 
     # ---- session setup ------------------------------------------------------------------------------
+
+    def _wire_handoff(self, ctx: _Ctx) -> None:
+        ctx.lease.on_change = lambda t: ctx.log.event(
+            "control_transition", **{"from": t.frm, "to": t.to, "actor": t.actor, "note": t.note})
+        ctx.surface.lease = ctx.lease
+        if not hasattr(self.gate, "attach"):
+            return
+        ctx.capture = HumanCapture(ctx.session.context, ctx.lease, lambda action, holder: ctx.log.event(
+            "human_action" if holder == "human" else "input_while_automation_held_control",
+            kind=action.kind, control=action.control, value=action.value, frame=action.frame_path))
+        page = ctx.session.page
+
+        def screenshot() -> bytes | None:
+            try:
+                png, _ = ctx.surface.screenshot_masked(list(ctx.app.sensitive_captions), ctx.pii_values())
+                return png
+            except PlaywrightError:
+                return None
+
+        self.gate.attach(SessionOps(pump=lambda ms: page.wait_for_timeout(ms), screenshot=screenshot,
+                                    announce=lambda: ctx.capture.announce(page), capture=ctx.capture,
+                                    surface=ctx.surface), ctx.log)
 
     def _sign_on(self, ctx: _Ctx) -> None:
         login = ctx.app.login
@@ -525,6 +553,16 @@ class DiscoveryAgent:
         if resolution.decision in ("denied", "aborted"):
             detail = f"operator {resolution.decision}: {resolution.note or reason}"
             raise _Stop("policy_blocked", detail, intervention_id)
+        if resolution.decision == "resumed":
+            # What the operator did by hand becomes a step the capability declares a human performs.
+            summary = ", ".join(f"{a.kind} {a.control}" for a in resolution.actions) or reason
+            ctx.actions.append(RecordedAction(
+                kind="request_human", intent=f"Operator performs this part manually: {reason}", target=None,
+                risk="read", performed_by="human"))
+            ctx.log.event("human_step_recorded", reason=reason, actions=summary)
+            ctx.lease.to("automation", "automation", note="discovery resumed")
+            if ctx.capture is not None:
+                ctx.capture.announce(ctx.session.page)
 
     # ---- recording -----------------------------------------------------------------------------------
 

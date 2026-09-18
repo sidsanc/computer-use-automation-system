@@ -88,6 +88,8 @@ def build_capability(
             payload["key"] = action.key
         elif action.kind == "extract":
             payload["output"] = action.output
+        elif action.kind == "request_human":
+            payload["reason"] = action.intent
         steps.append(Step(
             id=f"s{index:02d}_{slug(action.intent)}", intent=action.intent, action=payload, target=target,
             post=action.post if effect != "none" else (), effect=effect,

@@ -91,6 +91,7 @@ class WebSurface:
         self.page = page
         self._cdp = page.context.new_cdp_session(page)
         self._latest: Observation | None = None
+        self.lease = None  # set when a run can hand control to a human
 
     # ---- observation -------------------------------------------------------------------------
 
@@ -235,7 +236,9 @@ class WebSurface:
                           destination_url=info["url"], destination_method=info["method"])
 
     def perform(self, kind: str, handle: ElementHandle | None, value: str | None = None, key: str | None = None,
-                timeout_s: float = 10) -> str | None:
+                timeout_s: float = 10, actor: str = "automation") -> str | None:
+        if self.lease is not None:
+            self.lease.require(actor)  # nobody acts on the session without holding control
         timeout = timeout_s * 1000
         match kind:
             case "click":
