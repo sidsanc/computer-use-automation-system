@@ -1,2 +1,2 @@
-{"seq": 1, "ts": "2026-09-18T21:56:57.585990+00:00", "type": "run_started", "capability": {"id": "member.savings_balance.lookup", "version": "1.0.0", "resolved_hash": "37cdad42abae83e4", "overlay": null}, "tenant": "cu_alpha", "inputs": {"member_number": "[pii]"}, "attended": false, "allow_irreversible": false}
-{"seq": 2, "ts": "2026-09-18T21:56:57.586989+00:00", "type": "run_finished", "status": "failure", "exit_code": 40, "duration_ms": 0}
+{"seq": 1, "ts": "2026-09-18T22:18:40.497514+00:00", "type": "run_started", "capability": {"id": "member.savings_balance.lookup", "version": "1.0.0", "resolved_hash": "37cdad42abae83e4", "overlay": null}, "tenant": "cu_alpha", "inputs": {"member_number": "[pii]"}, "attended": false, "allow_irreversible": false}
+{"seq": 2, "ts": "2026-09-18T22:18:40.497514+00:00", "type": "run_finished", "status": "failure", "exit_code": 40, "duration_ms": 0}

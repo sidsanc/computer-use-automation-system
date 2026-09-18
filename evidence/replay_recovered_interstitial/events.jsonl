@@ -1,39 +1,39 @@
-{"seq": 1, "ts": "2026-09-18T21:56:57.588989+00:00", "type": "run_started", "capability": {"id": "member.savings_balance.lookup", "version": "1.0.0", "resolved_hash": "37cdad42abae83e4", "overlay": null}, "tenant": "cu_alpha", "inputs": {"member_number": "[pii]"}, "attended": false, "allow_irreversible": false}
-{"seq": 2, "ts": "2026-09-18T21:56:57.631722+00:00", "type": "navigated", "path": "/login"}
-{"seq": 3, "ts": "2026-09-18T21:56:57.631722+00:00", "type": "step_started", "step_id": "s01_fill_operator_id", "intent": "Enter the operator ID", "action": "fill"}
-{"seq": 4, "ts": "2026-09-18T21:56:57.662989+00:00", "type": "policy_decision", "step_id": "s01_fill_operator_id", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
-{"seq": 5, "ts": "2026-09-18T21:56:57.666495+00:00", "type": "action_performed", "step_id": "s01_fill_operator_id", "action": "fill", "risk": "read", "locator_rank": null}
-{"seq": 6, "ts": "2026-09-18T21:56:57.673006+00:00", "type": "step_completed", "step_id": "s01_fill_operator_id"}
-{"seq": 7, "ts": "2026-09-18T21:56:57.673006+00:00", "type": "step_started", "step_id": "s02_fill_password", "intent": "Enter the operator password", "action": "fill"}
-{"seq": 8, "ts": "2026-09-18T21:56:57.682012+00:00", "type": "policy_decision", "step_id": "s02_fill_password", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
-{"seq": 9, "ts": "2026-09-18T21:56:57.685465+00:00", "type": "action_performed", "step_id": "s02_fill_password", "action": "fill", "risk": "read", "locator_rank": null}
-{"seq": 10, "ts": "2026-09-18T21:56:57.691463+00:00", "type": "step_completed", "step_id": "s02_fill_password"}
-{"seq": 11, "ts": "2026-09-18T21:56:57.691463+00:00", "type": "step_started", "step_id": "s03_sign_on", "intent": "Submit the sign-on form", "action": "click"}
-{"seq": 12, "ts": "2026-09-18T21:56:57.701773+00:00", "type": "policy_decision", "step_id": "s03_sign_on", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "POST to a route known to be read-only"}
-{"seq": 13, "ts": "2026-09-18T21:56:57.759493+00:00", "type": "action_performed", "step_id": "s03_sign_on", "action": "click", "risk": "navigation", "locator_rank": null}
-{"seq": 14, "ts": "2026-09-18T21:56:57.809506+00:00", "type": "step_completed", "step_id": "s03_sign_on"}
-{"seq": 15, "ts": "2026-09-18T21:56:57.826167+00:00", "type": "signed_on"}
-{"seq": 16, "ts": "2026-09-18T21:56:57.841708+00:00", "type": "navigated", "path": "/teller"}
-{"seq": 17, "ts": "2026-09-18T21:56:57.844736+00:00", "type": "app_fingerprint", "version": "7.2.4", "required": ">=7.2,<8"}
-{"seq": 18, "ts": "2026-09-18T21:56:57.844736+00:00", "type": "step_started", "step_id": "s01_open_member_inquiry_from_main_menu", "intent": "Open Member Inquiry from main menu", "action": "click"}
-{"seq": 19, "ts": "2026-09-18T21:56:57.897387+00:00", "type": "policy_decision", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "GET navigation"}
-{"seq": 20, "ts": "2026-09-18T21:56:57.930646+00:00", "type": "action_performed", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "risk": "navigation", "locator_rank": 0}
-{"seq": 21, "ts": "2026-09-18T21:56:58.183099+00:00", "type": "handler_fired", "step_id": "s01_open_member_inquiry_from_main_menu", "code": "maintenance_notice", "kind": "recoverable", "phase": "post"}
-{"seq": 22, "ts": "2026-09-18T21:56:58.194111+00:00", "type": "policy_decision", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "GET navigation"}
-{"seq": 23, "ts": "2026-09-18T21:56:58.207032+00:00", "type": "recovery_applied", "step_id": "s01_open_member_inquiry_from_main_menu", "code": "maintenance_notice", "recovery": "dismiss", "attempt": 1}
-{"seq": 24, "ts": "2026-09-18T21:56:58.231034+00:00", "type": "step_completed", "step_id": "s01_open_member_inquiry_from_main_menu"}
-{"seq": 25, "ts": "2026-09-18T21:56:58.231034+00:00", "type": "step_started", "step_id": "s02_enter_the_member_number_in_the_search_fi", "intent": "Enter the member number in the search field", "action": "fill"}
-{"seq": 26, "ts": "2026-09-18T21:56:58.256480+00:00", "type": "policy_decision", "step_id": "s02_enter_the_member_number_in_the_search_fi", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
-{"seq": 27, "ts": "2026-09-18T21:56:58.259479+00:00", "type": "action_performed", "step_id": "s02_enter_the_member_number_in_the_search_fi", "action": "fill", "risk": "read", "locator_rank": 0}
-{"seq": 28, "ts": "2026-09-18T21:56:58.277575+00:00", "type": "step_completed", "step_id": "s02_enter_the_member_number_in_the_search_fi"}
-{"seq": 29, "ts": "2026-09-18T21:56:58.277575+00:00", "type": "step_started", "step_id": "s03_submit_the_member_search", "intent": "Submit the member search", "action": "click"}
-{"seq": 30, "ts": "2026-09-18T21:56:58.297614+00:00", "type": "policy_decision", "step_id": "s03_submit_the_member_search", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "POST to a route known to be read-only"}
-{"seq": 31, "ts": "2026-09-18T21:56:58.305400+00:00", "type": "action_performed", "step_id": "s03_submit_the_member_search", "action": "click", "risk": "navigation", "locator_rank": 0}
-{"seq": 32, "ts": "2026-09-18T21:56:58.333401+00:00", "type": "step_completed", "step_id": "s03_submit_the_member_search"}
-{"seq": 33, "ts": "2026-09-18T21:56:58.333401+00:00", "type": "step_started", "step_id": "s04_read_the_regular_savings_share_balance", "intent": "Read the Regular Savings share balance", "action": "extract"}
-{"seq": 34, "ts": "2026-09-18T21:56:58.359865+00:00", "type": "policy_decision", "step_id": "s04_read_the_regular_savings_share_balance", "action": "extract", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
-{"seq": 35, "ts": "2026-09-18T21:56:58.361864+00:00", "type": "action_performed", "step_id": "s04_read_the_regular_savings_share_balance", "action": "extract", "risk": "read", "locator_rank": 0}
-{"seq": 36, "ts": "2026-09-18T21:56:58.361864+00:00", "type": "output_extracted", "step_id": "s04_read_the_regular_savings_share_balance", "output": "savings_balance"}
-{"seq": 37, "ts": "2026-09-18T21:56:58.379335+00:00", "type": "step_completed", "step_id": "s04_read_the_regular_savings_share_balance"}
-{"seq": 38, "ts": "2026-09-18T21:56:58.399449+00:00", "type": "success_verified"}
-{"seq": 39, "ts": "2026-09-18T21:56:58.403463+00:00", "type": "run_finished", "status": "success", "exit_code": 0, "duration_ms": 813}
+{"seq": 1, "ts": "2026-09-18T22:18:40.498516+00:00", "type": "run_started", "capability": {"id": "member.savings_balance.lookup", "version": "1.0.0", "resolved_hash": "37cdad42abae83e4", "overlay": null}, "tenant": "cu_alpha", "inputs": {"member_number": "[pii]"}, "attended": false, "allow_irreversible": false}
+{"seq": 2, "ts": "2026-09-18T22:18:40.543347+00:00", "type": "navigated", "path": "/login"}
+{"seq": 3, "ts": "2026-09-18T22:18:40.543347+00:00", "type": "step_started", "step_id": "s01_fill_operator_id", "intent": "Enter the operator ID", "action": "fill"}
+{"seq": 4, "ts": "2026-09-18T22:18:40.577392+00:00", "type": "policy_decision", "step_id": "s01_fill_operator_id", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
+{"seq": 5, "ts": "2026-09-18T22:18:40.580686+00:00", "type": "action_performed", "step_id": "s01_fill_operator_id", "action": "fill", "risk": "read", "locator_rank": null}
+{"seq": 6, "ts": "2026-09-18T22:18:40.587861+00:00", "type": "step_completed", "step_id": "s01_fill_operator_id"}
+{"seq": 7, "ts": "2026-09-18T22:18:40.587861+00:00", "type": "step_started", "step_id": "s02_fill_password", "intent": "Enter the operator password", "action": "fill"}
+{"seq": 8, "ts": "2026-09-18T22:18:40.598027+00:00", "type": "policy_decision", "step_id": "s02_fill_password", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
+{"seq": 9, "ts": "2026-09-18T22:18:40.601536+00:00", "type": "action_performed", "step_id": "s02_fill_password", "action": "fill", "risk": "read", "locator_rank": null}
+{"seq": 10, "ts": "2026-09-18T22:18:40.606601+00:00", "type": "step_completed", "step_id": "s02_fill_password"}
+{"seq": 11, "ts": "2026-09-18T22:18:40.606601+00:00", "type": "step_started", "step_id": "s03_sign_on", "intent": "Submit the sign-on form", "action": "click"}
+{"seq": 12, "ts": "2026-09-18T22:18:40.618505+00:00", "type": "policy_decision", "step_id": "s03_sign_on", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "POST to a route known to be read-only"}
+{"seq": 13, "ts": "2026-09-18T22:18:40.663334+00:00", "type": "action_performed", "step_id": "s03_sign_on", "action": "click", "risk": "navigation", "locator_rank": null}
+{"seq": 14, "ts": "2026-09-18T22:18:40.710873+00:00", "type": "step_completed", "step_id": "s03_sign_on"}
+{"seq": 15, "ts": "2026-09-18T22:18:40.729457+00:00", "type": "signed_on"}
+{"seq": 16, "ts": "2026-09-18T22:18:40.748010+00:00", "type": "navigated", "path": "/teller"}
+{"seq": 17, "ts": "2026-09-18T22:18:40.752983+00:00", "type": "app_fingerprint", "version": "7.2.4", "required": ">=7.2,<8"}
+{"seq": 18, "ts": "2026-09-18T22:18:40.752983+00:00", "type": "step_started", "step_id": "s01_open_member_inquiry_from_main_menu", "intent": "Open Member Inquiry from main menu", "action": "click"}
+{"seq": 19, "ts": "2026-09-18T22:18:40.804837+00:00", "type": "policy_decision", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "GET navigation"}
+{"seq": 20, "ts": "2026-09-18T22:18:40.835123+00:00", "type": "action_performed", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "risk": "navigation", "locator_rank": 0}
+{"seq": 21, "ts": "2026-09-18T22:18:41.084913+00:00", "type": "handler_fired", "step_id": "s01_open_member_inquiry_from_main_menu", "code": "maintenance_notice", "kind": "recoverable", "phase": "post"}
+{"seq": 22, "ts": "2026-09-18T22:18:41.097110+00:00", "type": "policy_decision", "step_id": "s01_open_member_inquiry_from_main_menu", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "GET navigation"}
+{"seq": 23, "ts": "2026-09-18T22:18:41.112712+00:00", "type": "recovery_applied", "step_id": "s01_open_member_inquiry_from_main_menu", "code": "maintenance_notice", "recovery": "dismiss", "attempt": 1}
+{"seq": 24, "ts": "2026-09-18T22:18:41.135653+00:00", "type": "step_completed", "step_id": "s01_open_member_inquiry_from_main_menu"}
+{"seq": 25, "ts": "2026-09-18T22:18:41.135653+00:00", "type": "step_started", "step_id": "s02_enter_the_member_number_in_the_search_fi", "intent": "Enter the member number in the search field", "action": "fill"}
+{"seq": 26, "ts": "2026-09-18T22:18:41.162293+00:00", "type": "policy_decision", "step_id": "s02_enter_the_member_number_in_the_search_fi", "action": "fill", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
+{"seq": 27, "ts": "2026-09-18T22:18:41.165795+00:00", "type": "action_performed", "step_id": "s02_enter_the_member_number_in_the_search_fi", "action": "fill", "risk": "read", "locator_rank": 0}
+{"seq": 28, "ts": "2026-09-18T22:18:41.184280+00:00", "type": "step_completed", "step_id": "s02_enter_the_member_number_in_the_search_fi"}
+{"seq": 29, "ts": "2026-09-18T22:18:41.184280+00:00", "type": "step_started", "step_id": "s03_submit_the_member_search", "intent": "Submit the member search", "action": "click"}
+{"seq": 30, "ts": "2026-09-18T22:18:41.205027+00:00", "type": "policy_decision", "step_id": "s03_submit_the_member_search", "action": "click", "verdict": "allow", "risk": "navigation", "rule": "within_policy", "reason": "POST to a route known to be read-only"}
+{"seq": 31, "ts": "2026-09-18T22:18:41.244508+00:00", "type": "action_performed", "step_id": "s03_submit_the_member_search", "action": "click", "risk": "navigation", "locator_rank": 0}
+{"seq": 32, "ts": "2026-09-18T22:18:41.271688+00:00", "type": "step_completed", "step_id": "s03_submit_the_member_search"}
+{"seq": 33, "ts": "2026-09-18T22:18:41.271688+00:00", "type": "step_started", "step_id": "s04_read_the_regular_savings_share_balance", "intent": "Read the Regular Savings share balance", "action": "extract"}
+{"seq": 34, "ts": "2026-09-18T22:18:41.297852+00:00", "type": "policy_decision", "step_id": "s04_read_the_regular_savings_share_balance", "action": "extract", "verdict": "allow", "risk": "read", "rule": "within_policy", "reason": "no navigation or submission"}
+{"seq": 35, "ts": "2026-09-18T22:18:41.299929+00:00", "type": "action_performed", "step_id": "s04_read_the_regular_savings_share_balance", "action": "extract", "risk": "read", "locator_rank": 0}
+{"seq": 36, "ts": "2026-09-18T22:18:41.299929+00:00", "type": "output_extracted", "step_id": "s04_read_the_regular_savings_share_balance", "output": "savings_balance"}
+{"seq": 37, "ts": "2026-09-18T22:18:41.315844+00:00", "type": "step_completed", "step_id": "s04_read_the_regular_savings_share_balance"}
+{"seq": 38, "ts": "2026-09-18T22:18:41.336152+00:00", "type": "success_verified"}
+{"seq": 39, "ts": "2026-09-18T22:18:41.339663+00:00", "type": "run_finished", "status": "success", "exit_code": 0, "duration_ms": 843}

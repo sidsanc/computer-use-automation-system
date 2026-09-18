@@ -1,5 +1,5 @@
 {
-  "run_id": "2fbf47ad3812",
+  "run_id": "eb11926c7bee",
   "status": "failure",
   "capability": {
     "id": "member.savings_balance.lookup",
@@ -18,7 +18,7 @@
     "category": "postcondition_timeout",
     "step_id": "s01_open_member_inquiry_from_main_menu",
     "expected": "{\"frame_path\": [\"main\"], \"path\": \"/teller/inquiry\"}",
-    "observed": "{\"frames\": {\"top\": \"http://127.0.0.1:64209/teller\", \"nav\": \"http://127.0.0.1:64209/teller/nav\", \"main\": \"http://127.0.0.1:64209/teller/home\"}, \"dialogs\": [], \"title\": \"CU Teller - Riverbend Federal Credit Union\"}",
+    "observed": "{\"frames\": {\"top\": \"http://127.0.0.1:50079/teller\", \"nav\": \"http://127.0.0.1:50079/teller/nav\", \"main\": \"http://127.0.0.1:50079/teller/home\"}, \"dialogs\": [], \"title\": \"CU Teller - Riverbend Federal Credit Union\"}",
     "evidence": {
       "screenshot": "failure.png",
       "observation": "failure-observation.json"
@@ -36,7 +36,7 @@
     "committed": [],
     "possible": []
   },
-  "started_at": "2026-09-18T21:57:08.131523Z",
-  "duration_ms": 10577,
-  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T215708Z_replay_2fbf47ad3812"
+  "started_at": "2026-09-18T22:18:51.448135Z",
+  "duration_ms": 10657,
+  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T221851Z_replay_eb11926c7bee"
 }

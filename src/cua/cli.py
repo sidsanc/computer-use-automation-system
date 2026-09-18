@@ -39,6 +39,52 @@ def schema(out: Annotated[str, typer.Option(help="Directory to write JSON Schema
         typer.echo(f"wrote {path}")
 
 
+@app.command()
+def demo(
+    evidence_root: Annotated[str, typer.Option(help="Where the tour's run directories are written.")] = "runs/demo",
+    video: Annotated[bool, typer.Option(help="Record the handoff run (unmasked; fictional data only).")] = False,
+    headed: Annotated[bool, typer.Option(help="Watch it happen in a visible browser.")] = False,
+) -> None:
+    """Run the whole deterministic tour against the mock app: outcomes, recoveries, failures, handoff, tenants.
+
+    No model and no API key: this is the production replay path end to end.
+    """
+    from pathlib import Path
+
+    from playwright.sync_api import sync_playwright
+
+    from cua.demo import run_tour
+
+    videos = frozenset({"handoff_operator_takes_control"} if video else set())
+    width = 3
+    passed = []
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=not headed)
+        for index, (scenario, result) in enumerate(
+            run_tour(browser, Path("config"), Path("capabilities"), Path(evidence_root), videos), start=1
+        ):
+            detail = (result.outcome.code if result.outcome else None) or \
+                     (result.failure.category if result.failure else None) or \
+                     (result.policy.rule if result.policy else None) or \
+                     (result.intervention.reason if result.intervention else "")
+            typer.secho(f"\n{index:>{width}}. {scenario.headline}", bold=True)
+            typer.echo(f"     {scenario.note}")
+            colour = {"success": "green", "business_outcome": "cyan", "needs_human": "yellow",
+                      "policy_blocked": "yellow", "failure": "red"}[result.status]
+            typer.secho(f"     -> {result.status} (exit {result.exit_code}) {detail}".rstrip(), fg=colour)
+            if result.recoveries_applied:
+                typer.echo(f"     recovered: {', '.join(r.handler for r in result.recoveries_applied)}")
+            if result.human_actions:
+                typer.echo(f"     operator did: {', '.join(a.kind + ' ' + a.control for a in result.human_actions)}")
+            if result.outputs:
+                typer.echo(f"     outputs: {json.dumps(result.outputs)}")
+            typer.echo(f"     evidence: {result.evidence_dir}")
+            passed.append((scenario.name, result.status))
+        browser.close()
+    typer.secho(f"\n{len(passed)} scenarios completed. Statuses: "
+                f"{', '.join(sorted({s for _, s in passed}))}", bold=True)
+
+
 def _operator_gate(attended: bool, port: int, timeout_s: float):
     """Attended runs get a live operator console; unattended runs return needs_human instead of waiting."""
     if not attended:

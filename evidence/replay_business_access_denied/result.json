@@ -1,5 +1,5 @@
 {
-  "run_id": "8fed805cb9a9",
+  "run_id": "b7529d439214",
   "status": "business_outcome",
   "capability": {
     "id": "member.savings_balance.lookup",
@@ -16,7 +16,7 @@
   "outcome": {
     "code": "access_denied",
     "message": "The operator is not authorized to service this record.",
-    "step_id": "s03_submit_the_member_search"
+    "step_id": "s04_read_the_regular_savings_share_balance"
   },
   "failure": null,
   "policy": null,
@@ -33,7 +33,7 @@
     "committed": [],
     "possible": []
   },
-  "started_at": "2026-09-18T21:56:56.899008Z",
-  "duration_ms": 686,
-  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T215656Z_replay_8fed805cb9a9"
+  "started_at": "2026-09-18T22:18:39.956746Z",
+  "duration_ms": 531,
+  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T221839Z_replay_b7529d439214"
 }

@@ -30,11 +30,18 @@ uv run cua discover goals/member_open_share.yaml --tenant cu_alpha --attended \
 
 ## Replay: the artifact runs without a model
 
-Regenerate all of these (they are deterministic, no API key needed):
+Regenerate all of these, or watch the same scenarios narrated as they run (both are deterministic
+and need no API key):
 
 ```
-uv run python scripts/make_evidence.py
+uv run python scripts/make_evidence.py     # rewrites this directory
+uv run cua demo                            # the same tour, narrated; add --headed to watch
 ```
+
+`handoff_operator_takes_control/handoff_operator_takes_control.webm` is a screen recording of the
+handoff: the run pauses on an unmodelled dialog, the banner switches to the operator, they clear the
+dialog, and replay resumes. Video cannot be masked after capture, so it is recorded only here and
+only over fictional data.
 
 | Run | Status (exit) | What it shows |
 | --- | --- | --- |

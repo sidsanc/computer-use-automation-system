@@ -1,61 +1,83 @@
 [
   {
     "run": "replay_success_other_member",
+    "headline": "Replay for a different member than the recording",
+    "note": "No value from the discovery run is baked into the artifact; every locator matched first choice.",
     "status": "success",
     "exit_code": 0,
-    "note": "Replayed for a different member than the one it was recorded with: no run value is baked in.",
     "outcome": null,
     "failure": null,
     "policy_rule": null,
     "recoveries": [],
     "human_actions": 0,
+    "locator_ranks": {
+      "s01_open_member_inquiry_from_main_menu": 0,
+      "s02_enter_the_member_number_in_the_search_fi": 0,
+      "s03_submit_the_member_search": 0,
+      "s04_read_the_regular_savings_share_balance": 0
+    },
     "tenant": "cu_alpha",
     "overlay": null
   },
   {
     "run": "replay_business_not_found",
+    "headline": "'No such member' is an answer, not a crash",
+    "note": "A business outcome with a code the caller handles, and exit code 10.",
     "status": "business_outcome",
     "exit_code": 10,
-    "note": "'No such member' is an answer for the caller, not a crash.",
     "outcome": "member_not_found",
     "failure": null,
     "policy_rule": null,
     "recoveries": [],
     "human_actions": 0,
+    "locator_ranks": {
+      "s01_open_member_inquiry_from_main_menu": 0,
+      "s02_enter_the_member_number_in_the_search_fi": 0,
+      "s03_submit_the_member_search": 0
+    },
     "tenant": "cu_alpha",
     "overlay": null
   },
   {
     "run": "replay_business_access_denied",
+    "headline": "A restricted record is also a business outcome",
+    "note": "Permission denial is reported to the caller, not raised as a failure.",
     "status": "business_outcome",
     "exit_code": 10,
-    "note": "Restricted record: a business outcome, not a failure.",
     "outcome": "access_denied",
     "failure": null,
     "policy_rule": null,
     "recoveries": [],
     "human_actions": 0,
+    "locator_ranks": {
+      "s01_open_member_inquiry_from_main_menu": 0,
+      "s02_enter_the_member_number_in_the_search_fi": 0,
+      "s03_submit_the_member_search": 0
+    },
     "tenant": "cu_alpha",
     "overlay": null
   },
   {
     "run": "replay_invalid_input",
+    "headline": "A malformed input never reaches the UI",
+    "note": "The caller broke the contract, so the browser is never opened.",
     "status": "failure",
     "exit_code": 40,
-    "note": "Caller contract violation, caught before the UI is touched.",
     "outcome": null,
     "failure": "invalid_input",
     "policy_rule": null,
     "recoveries": [],
     "human_actions": 0,
+    "locator_ranks": {},
     "tenant": "cu_alpha",
     "overlay": null
   },
   {
     "run": "replay_recovered_interstitial",
+    "headline": "A known interstitial is dismissed and the run continues",
+    "note": "Recovery is reported alongside the status, never mistaken for the answer.",
     "status": "success",
     "exit_code": 0,
-    "note": "Known interstitial dismissed within budget; the run still succeeds.",
     "outcome": null,
     "failure": null,
     "policy_rule": null,
@@ -63,14 +85,21 @@
       "maintenance_notice"
     ],
     "human_actions": 0,
+    "locator_ranks": {
+      "s01_open_member_inquiry_from_main_menu": 0,
+      "s02_enter_the_member_number_in_the_search_fi": 0,
+      "s03_submit_the_member_search": 0,
+      "s04_read_the_regular_savings_share_balance": 0
+    },
     "tenant": "cu_alpha",
     "overlay": null
   },
   {
     "run": "replay_recovered_session_expiry",
+    "headline": "Session expiry re-authenticates and restarts",
+    "note": "Allowed only because nothing had been written yet.",
     "status": "success",
     "exit_code": 0,
-    "note": "Re-authenticated and restarted; only safe because nothing had been written yet.",
     "outcome": null,
     "failure": null,
     "policy_rule": null,
@@ -78,110 +107,176 @@
       "session_expired"
     ],
     "human_actions": 0,
+    "locator_ranks": {
+      "s01_open_member_inquiry_from_main_menu": 0,
+      "s02_enter_the_member_number_in_the_search_fi": 0,
+      "s03_submit_the_member_search": 0,
+      "s04_read_the_regular_savings_share_balance": 0
+    },
     "tenant": "cu_alpha",
     "overlay": null
   },
   {
     "run": "replay_slow_load",
+    "headline": "A slow screen is waited for, not failed",
+    "note": "Waits are condition-based, so a four-second load is simply 'not ready yet'.",
     "status": "success",
     "exit_code": 0,
-    "note": "A slow screen is waited for by condition, not treated as a failure.",
     "outcome": null,
     "failure": null,
     "policy_rule": null,
     "recoveries": [],
     "human_actions": 0,
+    "locator_ranks": {
+      "s01_open_member_inquiry_from_main_menu": 0,
+      "s02_enter_the_member_number_in_the_search_fi": 0,
+      "s03_submit_the_member_search": 0,
+      "s04_read_the_regular_savings_share_balance": 0
+    },
     "tenant": "cu_alpha",
     "overlay": null
   },
   {
     "run": "replay_hard_failure_app_error",
+    "headline": "A core error page stops the run with evidence",
+    "note": "Step, expected vs observed, masked screenshot, redacted observation and a trace.",
     "status": "failure",
     "exit_code": 40,
-    "note": "Core error page: hard failure with screenshot, observation and trace.",
     "outcome": null,
     "failure": "app_error",
     "policy_rule": null,
     "recoveries": [],
     "human_actions": 0,
+    "locator_ranks": {
+      "s01_open_member_inquiry_from_main_menu": 0,
+      "s02_enter_the_member_number_in_the_search_fi": 0,
+      "s03_submit_the_member_search": 0
+    },
     "tenant": "cu_alpha",
     "overlay": null
   },
   {
     "run": "replay_needs_human_unknown_dialog",
+    "headline": "An unmodelled dialog escalates instead of guessing",
+    "note": "Unattended, the run returns needs_human with the intervention request saved.",
     "status": "needs_human",
     "exit_code": 20,
-    "note": "An unmodelled dialog escalates; unattended, the run returns needs_human with the request.",
     "outcome": null,
     "failure": null,
     "policy_rule": null,
     "recoveries": [],
     "human_actions": 0,
+    "locator_ranks": {
+      "s01_open_member_inquiry_from_main_menu": 0,
+      "s02_enter_the_member_number_in_the_search_fi": 0,
+      "s03_submit_the_member_search": 0
+    },
     "tenant": "cu_alpha",
     "overlay": null
   },
   {
     "run": "handoff_operator_takes_control",
+    "headline": "A person takes the live session and hands it back",
+    "note": "Control transitions are recorded, the human's actions captured, and replay resumes from the step the screen actually supports.",
     "status": "success",
     "exit_code": 0,
-    "note": "Operator takes the live session, clears the dialog, hands back; replay resumes from the verified state.",
     "outcome": null,
     "failure": null,
     "policy_rule": null,
     "recoveries": [],
     "human_actions": 1,
+    "locator_ranks": {
+      "s01_open_member_inquiry_from_main_menu": 0,
+      "s02_enter_the_member_number_in_the_search_fi": 0,
+      "s03_submit_the_member_search": 0,
+      "s04_read_the_regular_savings_share_balance": 0
+    },
     "tenant": "cu_alpha",
     "overlay": null
   },
   {
     "run": "replay_policy_blocked_irreversible",
+    "headline": "An irreversible commit is refused unattended",
+    "note": "Draft capability and no caller opt-in, so policy blocks it with exit code 30.",
     "status": "policy_blocked",
     "exit_code": 30,
-    "note": "Unattended replay refuses the irreversible commit: draft capability, and the caller did not opt in.",
     "outcome": null,
     "failure": null,
     "policy_rule": "irreversible_unattended",
     "recoveries": [],
     "human_actions": 0,
+    "locator_ranks": {
+      "s01_navigate_to_member_inquiry_to_locate_the": 0,
+      "s02_enter_member_number_to_search_for_the_me": 0,
+      "s03_search_for_the_member": 0,
+      "s04_open_a_new_share_account_for_this_member": 0,
+      "s05_select_the_requested_share_type": 0,
+      "s06_enter_the_initial_deposit_amount": 0,
+      "s07_continue_to_confirm_opening_the_new_shar": 0,
+      "s08_confirm_opening_of_the_new_share_account": 0
+    },
     "tenant": "cu_alpha",
     "overlay": null
   },
   {
     "run": "replay_irreversible_after_approval",
+    "headline": "The same commit proceeds once a human approves",
+    "note": "Attended run, operator approves, the confirmation number comes back as a typed output.",
     "status": "success",
     "exit_code": 0,
-    "note": "With a human approving in an attended run, the same capability commits and returns the confirmation id.",
     "outcome": null,
     "failure": null,
     "policy_rule": null,
     "recoveries": [],
     "human_actions": 0,
+    "locator_ranks": {
+      "s01_navigate_to_member_inquiry_to_locate_the": 0,
+      "s02_enter_member_number_to_search_for_the_me": 0,
+      "s03_search_for_the_member": 0,
+      "s04_open_a_new_share_account_for_this_member": 0,
+      "s05_select_the_requested_share_type": 0,
+      "s06_enter_the_initial_deposit_amount": 0,
+      "s07_continue_to_confirm_opening_the_new_shar": 0,
+      "s08_confirm_opening_of_the_new_share_account": 0,
+      "s09_read_the_confirmation_number_from_the_su": 0
+    },
     "tenant": "cu_alpha",
     "overlay": null
   },
   {
     "run": "tenant_beta_without_overlay",
+    "headline": "A second tenant, reworded, without its overlay",
+    "note": "The brittle fallback matches the wrong control (rank 1) and the step's own check catches it.",
     "status": "failure",
     "exit_code": 40,
-    "note": "Second tenant, no overlay: fails loudly on the reworded control.",
     "outcome": null,
     "failure": "postcondition_timeout",
     "policy_rule": null,
     "recoveries": [],
     "human_actions": 0,
+    "locator_ranks": {
+      "s01_open_member_inquiry_from_main_menu": 1
+    },
     "tenant": "cu_beta",
     "overlay": null
   },
   {
     "run": "tenant_beta_with_overlay",
+    "headline": "The same artifact plus a tenant overlay",
+    "note": "Wording differences only; the contract and the risk are untouched.",
     "status": "success",
     "exit_code": 0,
-    "note": "Same artifact plus the tenant overlay: succeeds on the rebranded app.",
     "outcome": null,
     "failure": null,
     "policy_rule": null,
     "recoveries": [],
     "human_actions": 0,
+    "locator_ranks": {
+      "s01_open_member_inquiry_from_main_menu": 0,
+      "s02_enter_the_member_number_in_the_search_fi": 0,
+      "s03_submit_the_member_search": 0,
+      "s04_read_the_regular_savings_share_balance": 0
+    },
     "tenant": "cu_beta",
     "overlay": "cu_beta"
   }

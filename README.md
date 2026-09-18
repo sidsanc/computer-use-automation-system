@@ -39,6 +39,20 @@ CUA_SECRET_TELLER_PASSWORD=change-me-local-only
 suite, all of `scripts/make_evidence.py`, and every `cua replay` command below. Only discovery calls
 a model.
 
+## The quickest look
+
+```bash
+uv sync && uv run playwright install chromium
+uv run cua demo --headed          # no API key needed
+```
+
+One command starts the mock app and walks every replay behaviour in turn — success on a member the
+flow was not recorded with, both business outcomes, a dismissed interstitial, session expiry,
+a slow screen, a hard failure, an escalation, an operator taking over the live session, an
+irreversible commit refused and then approved, and one artifact running on a second tenant with and
+without its overlay. `--headed` shows it happening in a real browser.
+`evidence/handoff_operator_takes_control/handoff_operator_takes_control.webm` records the handoff.
+
 ## Demo path
 
 ```bash
@@ -90,6 +104,7 @@ Test members: `100234`, `100871` (active), `100555` (restricted), `999999` (not 
 | `cua faults set\|clear\|show` | Inject runtime faults: `session_expired`, `maintenance_notice`, `unknown_dialog`, `slow_load`, `server_error`. |
 | `cua discover GOAL.yaml --tenant T -p k=v` | LLM discovery, then a verification replay. `--attended` opens the operator console. |
 | `cua replay ID@VERSION --tenant T -p k=v` | Deterministic replay. `--attended`, `--allow-irreversible`, `--trace`, `--video`, `--no-overlay`. |
+| `cua demo` | The narrated tour of every replay behaviour. `--headed`, `--video`. |
 | `cua schema` | Regenerate the JSON Schemas in `schemas/`. |
 
 ## Layout

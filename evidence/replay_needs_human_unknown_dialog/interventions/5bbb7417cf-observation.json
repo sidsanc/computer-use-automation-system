@@ -1,27 +1,27 @@
 {
-  "observation_id": "7fb62cad",
+  "observation_id": "248ed970",
   "title": "CU Teller - Alpha Community Credit Union",
   "frames": [
     {
       "path": [],
-      "url": "http://127.0.0.1:64208/teller"
+      "url": "http://127.0.0.1:50078/teller"
     },
     {
       "path": [
         "nav"
       ],
-      "url": "http://127.0.0.1:64208/teller/nav"
+      "url": "http://127.0.0.1:50078/teller/nav"
     },
     {
       "path": [
         "main"
       ],
-      "url": "http://127.0.0.1:64208/teller/member/[pii]"
+      "url": "http://127.0.0.1:50078/teller/member/[pii]"
     }
   ],
   "nodes": [
     {
-      "eid": "e2",
+      "eid": "e1",
       "frame_path": [
         "nav"
       ],
@@ -42,7 +42,7 @@
       "order": 13
     },
     {
-      "eid": "e3",
+      "eid": "e2",
       "frame_path": [
         "nav"
       ],
@@ -63,7 +63,7 @@
       "order": 17
     },
     {
-      "eid": "e7",
+      "eid": "e6",
       "frame_path": [
         "nav"
       ],
@@ -84,7 +84,7 @@
       "order": 18
     },
     {
-      "eid": "e4",
+      "eid": "e3",
       "frame_path": [
         "nav"
       ],
@@ -105,7 +105,7 @@
       "order": 22
     },
     {
-      "eid": "e8",
+      "eid": "e7",
       "frame_path": [
         "nav"
       ],
@@ -126,7 +126,7 @@
       "order": 23
     },
     {
-      "eid": "e5",
+      "eid": "e4",
       "frame_path": [
         "nav"
       ],
@@ -147,7 +147,7 @@
       "order": 27
     },
     {
-      "eid": "e9",
+      "eid": "e8",
       "frame_path": [
         "nav"
       ],
@@ -168,7 +168,7 @@
       "order": 28
     },
     {
-      "eid": "e6",
+      "eid": "e5",
       "frame_path": [
         "nav"
       ],
@@ -189,7 +189,7 @@
       "order": 32
     },
     {
-      "eid": "e10",
+      "eid": "e9",
       "frame_path": [
         "nav"
       ],
@@ -210,22 +210,7 @@
       "order": 33
     },
     {
-      "eid": null,
-      "frame_path": [
-        "nav"
-      ],
-      "role": "StaticText",
-      "name": "AUTOMATION IN CONTROL — please do not interact with this window",
-      "name_source": "native",
-      "value": null,
-      "disabled": false,
-      "in_dialog": false,
-      "table": null,
-      "has_control": false,
-      "order": 38
-    },
-    {
-      "eid": "e13",
+      "eid": "e11",
       "frame_path": [
         "main"
       ],
@@ -246,7 +231,7 @@
       "order": 16
     },
     {
-      "eid": "e14",
+      "eid": "e12",
       "frame_path": [
         "main"
       ],
@@ -267,7 +252,7 @@
       "order": 26
     },
     {
-      "eid": "e15",
+      "eid": "e13",
       "frame_path": [
         "main"
       ],
@@ -288,7 +273,7 @@
       "order": 28
     },
     {
-      "eid": "e16",
+      "eid": "e14",
       "frame_path": [
         "main"
       ],
@@ -309,7 +294,7 @@
       "order": 32
     },
     {
-      "eid": "e17",
+      "eid": "e15",
       "frame_path": [
         "main"
       ],
@@ -330,7 +315,7 @@
       "order": 34
     },
     {
-      "eid": "e18",
+      "eid": "e16",
       "frame_path": [
         "main"
       ],
@@ -351,7 +336,7 @@
       "order": 38
     },
     {
-      "eid": "e19",
+      "eid": "e17",
       "frame_path": [
         "main"
       ],
@@ -372,7 +357,7 @@
       "order": 40
     },
     {
-      "eid": "e20",
+      "eid": "e18",
       "frame_path": [
         "main"
       ],
@@ -393,7 +378,7 @@
       "order": 44
     },
     {
-      "eid": "e21",
+      "eid": "e19",
       "frame_path": [
         "main"
       ],
@@ -414,7 +399,7 @@
       "order": 46
     },
     {
-      "eid": "e22",
+      "eid": "e20",
       "frame_path": [
         "main"
       ],
@@ -435,7 +420,7 @@
       "order": 56
     },
     {
-      "eid": "e23",
+      "eid": "e21",
       "frame_path": [
         "main"
       ],
@@ -456,7 +441,7 @@
       "order": 62
     },
     {
-      "eid": "e24",
+      "eid": "e22",
       "frame_path": [
         "main"
       ],
@@ -477,7 +462,7 @@
       "order": 65
     },
     {
-      "eid": "e25",
+      "eid": "e23",
       "frame_path": [
         "main"
       ],
@@ -498,7 +483,7 @@
       "order": 68
     },
     {
-      "eid": "e26",
+      "eid": "e24",
       "frame_path": [
         "main"
       ],
@@ -523,7 +508,7 @@
       "order": 74
     },
     {
-      "eid": "e27",
+      "eid": "e25",
       "frame_path": [
         "main"
       ],
@@ -548,7 +533,7 @@
       "order": 77
     },
     {
-      "eid": "e28",
+      "eid": "e26",
       "frame_path": [
         "main"
       ],
@@ -573,7 +558,7 @@
       "order": 80
     },
     {
-      "eid": "e29",
+      "eid": "e27",
       "frame_path": [
         "main"
       ],
@@ -598,7 +583,7 @@
       "order": 86
     },
     {
-      "eid": "e30",
+      "eid": "e28",
       "frame_path": [
         "main"
       ],
@@ -623,7 +608,7 @@
       "order": 89
     },
     {
-      "eid": "e31",
+      "eid": "e29",
       "frame_path": [
         "main"
       ],
@@ -648,7 +633,7 @@
       "order": 92
     },
     {
-      "eid": "e32",
+      "eid": "e30",
       "frame_path": [
         "main"
       ],
@@ -669,7 +654,7 @@
       "order": 103
     },
     {
-      "eid": "e38",
+      "eid": "e36",
       "frame_path": [
         "main"
       ],
@@ -690,7 +675,7 @@
       "order": 105
     },
     {
-      "eid": "e33",
+      "eid": "e31",
       "frame_path": [
         "main"
       ],
@@ -711,7 +696,7 @@
       "order": 107
     },
     {
-      "eid": "e39",
+      "eid": "e37",
       "frame_path": [
         "main"
       ],
@@ -732,7 +717,7 @@
       "order": 109
     },
     {
-      "eid": "e11",
+      "eid": "e10",
       "frame_path": [
         "main"
       ],
@@ -747,7 +732,7 @@
       "order": 112
     },
     {
-      "eid": "e35",
+      "eid": "e33",
       "frame_path": [
         "main"
       ],
@@ -768,7 +753,7 @@
       "order": 118
     },
     {
-      "eid": "e36",
+      "eid": "e34",
       "frame_path": [
         "main"
       ],
@@ -789,7 +774,7 @@
       "order": 122
     },
     {
-      "eid": "e37",
+      "eid": "e35",
       "frame_path": [
         "main"
       ],
@@ -810,7 +795,7 @@
       "order": 126
     },
     {
-      "eid": "e40",
+      "eid": "e38",
       "frame_path": [
         "main"
       ],
@@ -831,7 +816,7 @@
       "order": 127
     },
     {
-      "eid": "e34",
+      "eid": "e32",
       "frame_path": [
         "main"
       ],
@@ -850,21 +835,6 @@
       },
       "has_control": false,
       "order": 138
-    },
-    {
-      "eid": null,
-      "frame_path": [
-        "main"
-      ],
-      "role": "StaticText",
-      "name": "AUTOMATION IN CONTROL — please do not interact with this window",
-      "name_source": "native",
-      "value": null,
-      "disabled": false,
-      "in_dialog": false,
-      "table": null,
-      "has_control": false,
-      "order": 142
     }
   ],
   "unavailable_frames": []

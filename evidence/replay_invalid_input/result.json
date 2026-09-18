@@ -1,5 +1,5 @@
 {
-  "run_id": "c7f2d2929668",
+  "run_id": "d36e5c670306",
   "status": "failure",
   "capability": {
     "id": "member.savings_balance.lookup",
@@ -31,7 +31,7 @@
     "committed": [],
     "possible": []
   },
-  "started_at": "2026-09-18T21:56:57.585990Z",
+  "started_at": "2026-09-18T22:18:40.496516Z",
   "duration_ms": 0,
-  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T215657Z_replay_c7f2d2929668"
+  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T221840Z_replay_d36e5c670306"
 }
