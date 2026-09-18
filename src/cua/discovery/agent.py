@@ -119,6 +119,7 @@ class _Ctx:
     extracted: dict[str, str] = field(default_factory=dict)
     usage: dict[str, int] = field(default_factory=lambda: {"input": 0, "output": 0, "cache_read": 0})
     served_models: set[str] = field(default_factory=set)
+    turns: int = 0
     lease: ControlLease = field(default_factory=ControlLease)
     capture: HumanCapture | None = None
 
@@ -197,7 +198,6 @@ class DiscoveryAgent:
         log.event("discovery_started", goal=goal.goal, capability_id=goal.capability_id, tenant=tenant.tenant_id,
                   model=self.model.model_id, prompt_template_hash=prompt_template_hash(tools),
                   inputs={k: "[pii]" if k in pii else v for k, v in inputs.items()})
-        turns = 0
         result: DiscoveryResult
         try:
             ctx.inputs = check_inputs(goal.inputs, inputs)
@@ -209,15 +209,19 @@ class DiscoveryAgent:
             self._wire_handoff(ctx)
             self._sign_on(ctx)
             entry_frames = self._enter(ctx)
-            turns = self._loop(ctx, tools)
+            self._loop(ctx, tools)
             capability, path = self._record(ctx, tools, entry_frames)
             result = DiscoveryResult(run_id, "recorded", f"saved {capability.id}@{capability.version}",
-                                     log.dir.as_posix(), turns, path.as_posix(), capability)
+                                     log.dir.as_posix(), ctx.turns, path.as_posix(), capability)
         except _Stop as stop:
-            result = DiscoveryResult(run_id, stop.status, stop.reason, log.dir.as_posix(), turns,
+            result = DiscoveryResult(run_id, stop.status, stop.reason, log.dir.as_posix(), ctx.turns,
                                      intervention_id=stop.intervention_id)
         except (InvalidInputError, MissingSecretError, RecordingError) as exc:
-            result = DiscoveryResult(run_id, "failed", redactor.text(str(exc)), log.dir.as_posix(), turns)
+            result = DiscoveryResult(run_id, "failed", redactor.text(str(exc)), log.dir.as_posix(), ctx.turns)
+        except PlaywrightError as exc:
+            log.event("browser_error", detail=str(exc).splitlines()[0])
+            result = DiscoveryResult(run_id, "failed", f"browser error: {str(exc).splitlines()[0]}",
+                                     log.dir.as_posix(), ctx.turns)
         finally:
             if ctx.session is not None:
                 try:
@@ -228,7 +232,7 @@ class DiscoveryAgent:
                 except PlaywrightError:
                     pass
         result.usage = dict(ctx.usage)
-        log.event("discovery_finished", status=result.status, reason=result.reason, turns=turns,
+        log.event("discovery_finished", status=result.status, reason=result.reason, turns=ctx.turns,
                   capability=result.capability_path, usage=ctx.usage, served_models=sorted(ctx.served_models))
         log.close()
         return result
@@ -243,7 +247,7 @@ class DiscoveryAgent:
             return
         ctx.capture = HumanCapture(ctx.session.context, ctx.lease, lambda action, holder: ctx.log.event(
             "human_action" if holder == "human" else "input_while_automation_held_control",
-            kind=action.kind, control=action.control, value=action.value, frame=action.frame_path))
+            kind=action.kind, control=action.control, value=action.value, frame=action.frame_path), ctx.surface)
         page = ctx.session.page
 
         def screenshot() -> bytes | None:
@@ -313,6 +317,7 @@ class DiscoveryAgent:
         no_progress = errors = 0
         max_turns = ctx.policy.max_steps
         for turn in range(1, max_turns + 1):
+            ctx.turns = turn
             if time.monotonic() - started > ctx.options.timeout_s:
                 raise _Stop("failed", f"discovery timed out after {ctx.options.timeout_s:.0f}s")
             reply = self.model.next_turn(SYSTEM_PROMPT, tools, messages)
@@ -343,6 +348,8 @@ class DiscoveryAgent:
                 return turn
             notes = self._auto_recover(ctx)
             content = [{"type": "text", "text": outcome}, *self._observation_content(ctx, turn, notes)]
+            if is_error:  # the API requires error tool results to be text-only
+                content = [block for block in content if block["type"] == "text"]
             messages.append({"role": "user", "content": [
                 {"type": "tool_result", "tool_use_id": call.id, "content": content, "is_error": is_error}]})
 
@@ -360,6 +367,8 @@ class DiscoveryAgent:
     def _observation_content(self, ctx: _Ctx, turn: int, notes: list[str]) -> list[dict]:
         ctx.surface.settle()
         ctx.obs = ctx.surface.observe()
+        ctx.log.event("observed", turn=turn, frames=["/".join(f.path) or "top" for f in ctx.obs.frames],
+                      unavailable=list(ctx.obs.unavailable_frames), nodes=len(ctx.obs.nodes))
         view = ctx.redactor.observation(ctx.obs).render()
         image, masked = ctx.surface.screenshot_masked(list(ctx.app.sensitive_captions),
                                                       ctx.pii_values(), jpeg=True)
@@ -428,7 +437,14 @@ class DiscoveryAgent:
         frames_before = ctx.surface.frame_urls()
         pre_keys = {(n.frame_path, n.role, n.name) for n in ctx.obs.nodes}
         try:
-            text = ctx.surface.perform(name, handle, ctx.value_of(value) if value else None, key)
+            # Re-resolve through the derived locators: an approval or takeover can take minutes,
+            # and this also proves at record time that the locators we are about to store work.
+            fresh = ctx.surface.resolve(target)
+            if fresh.rank > 0:
+                ctx.log.event("locator_fallback_at_record_time", intent=intent, rank=fresh.rank)
+            text = ctx.surface.perform(name, fresh.handle, ctx.value_of(value) if value else None, key)
+        except TargetingError as exc:
+            return f"The element could not be found again before acting: {exc}", True, False
         except PlaywrightError as exc:
             return f"The action failed: {str(exc).splitlines()[0]}", True, False
 

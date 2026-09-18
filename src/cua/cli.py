@@ -86,6 +86,7 @@ def replay(
     headed: Annotated[bool, typer.Option(help="Show the browser window.")] = False,
     trace: Annotated[bool, typer.Option(help="Keep a Playwright trace when the run does not succeed.")] = False,
     video: Annotated[bool, typer.Option(help="Record video (unmasked; fake data only).")] = False,
+    overlay: Annotated[bool, typer.Option(help="Apply the tenant's overlay, when it has one.")] = True,
     operator_port: Annotated[int, typer.Option(help="Port for the operator console (attended runs).")] = 8765,
     operator_timeout: Annotated[float, typer.Option(help="Seconds to wait for an operator.")] = 300,
     evidence_root: Annotated[str, typer.Option(help="Where run evidence directories are written.")] = "runs",
@@ -105,10 +106,11 @@ def replay(
     options = ReplayOptions(attended=attended, allow_irreversible=allow_irreversible, trace=trace, video=video,
                             evidence_root=Path(evidence_root))
     gate, console = _operator_gate(attended, operator_port, operator_timeout)
+    tenant_overlay = workspace.overlay(tenant_config.overlay) if overlay and tenant_config.overlay else None
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=not headed and not attended)
         result = ReplayEngine(browser, EnvSecretStore(), gate).run(
-            cap, tenant_config, workspace.app(tenant_config.app), _params(param), options)
+            cap, tenant_config, workspace.app(tenant_config.app), _params(param), options, overlay=tenant_overlay)
         browser.close()
     if console is not None:
         console.stop()
@@ -121,7 +123,7 @@ def discover(
     goal_file: Annotated[str, typer.Argument(help="Goal spec YAML (goal + typed input/output contract).")],
     tenant: Annotated[str, typer.Option(help="Tenant id from config/tenants.")],
     param: Annotated[list[str], typer.Option("--param", "-p", help="Discovery input as name=value.")] = [],  # noqa: B006
-    model: Annotated[str, typer.Option(help="Claude model id.")] = "claude-opus-5",
+    model: Annotated[str, typer.Option(help="Claude model id.")] = "claude-sonnet-5",
     effort: Annotated[str, typer.Option(help="low | medium | high | xhigh | max")] = "high",
     verify_param: Annotated[list[str], typer.Option(help="Inputs for the verification replay (default: same).")] = [],  # noqa: B006
     attended: Annotated[bool, typer.Option(help="Open an operator console for approvals and takeovers.")] = False,

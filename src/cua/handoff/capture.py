@@ -1,3 +1,4 @@
+import time
 from collections.abc import Callable
 from datetime import UTC, datetime
 from importlib.resources import files
@@ -19,9 +20,15 @@ class HumanCapture:
     does while automation holds it is recorded as an anomaly rather than silently accepted.
     """
 
-    def __init__(self, context: BrowserContext, lease: ControlLease, on_event: Callable[[HumanAction, str], None]):
+    ECHO_WINDOW_S = 2.0
+    ECHOES = {"click": {"click", "submit"}, "fill": {"fill"}, "select": {"fill"},
+              "press_key": {"press_key", "submit"}}
+
+    def __init__(self, context: BrowserContext, lease: ControlLease, on_event: Callable[[HumanAction, str], None],
+                 surface=None):
         self.lease = lease
         self.on_event = on_event
+        self.surface = surface
         self.actions: list[HumanAction] = []
         self.anomalies: list[HumanAction] = []
         context.expose_binding("__cuaHumanEvent", lambda _source, payload: self._record(payload))
@@ -37,8 +44,17 @@ class HumanCapture:
             at=datetime.now(UTC),
         )
         holder = self.lease.holder
+        if holder != "human" and self._echoes_automation(action.kind):
+            return  # the page cannot tell our own dispatched events from a person's; this one was ours
         (self.actions if holder == "human" else self.anomalies).append(action)
         self.on_event(action, holder)
+
+    def _echoes_automation(self, kind: str) -> bool:
+        last = getattr(self.surface, "last_action", None)
+        if last is None:
+            return False
+        performed, at = last
+        return kind in self.ECHOES.get(performed, set()) and (time.monotonic() - at) < self.ECHO_WINDOW_S
 
     def announce(self, page) -> None:
         """Push the current control state into every frame (also call after navigation)."""

@@ -51,6 +51,7 @@ class Observation(BaseModel):
     title: str
     frames: list[FrameInfo]
     nodes: list[AXNode]
+    unavailable_frames: tuple[str, ...] = ()  # could not be read this time (navigating); not "empty"
 
     def node(self, eid: str) -> AXNode:
         for n in self.nodes:
@@ -67,6 +68,8 @@ class Observation(BaseModel):
     def render(self, max_rows_per_table: int = 25) -> str:
         """Trimmed text view for the model. Condition checks never use this."""
         lines = [f"Page title: {self.title}"]
+        if self.unavailable_frames:
+            lines.append(f"[warning] frames still loading, observe again: {', '.join(self.unavailable_frames)}")
         for frame in self.frames:
             nodes = [n for n in self.nodes if n.frame_path == frame.path]
             if not nodes:

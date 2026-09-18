@@ -67,6 +67,11 @@ class Workspace:
     def app(self, product: str) -> AppProfile:
         return AppProfile.model_validate(_load(self.root / "apps" / f"{product}.yaml"))
 
+    def overlay(self, name: str):
+        from cua.tenancy.overlay import Overlay
+
+        return Overlay.model_validate(_load(self.root / "overlays" / f"{name}.yaml"))
+
     def policy_for(self, tenant: TenantConfig) -> Policy:
         return self.app(tenant.app).policy.for_tenant(tenant.base, tenant.policy)
 

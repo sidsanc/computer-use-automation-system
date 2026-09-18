@@ -92,6 +92,7 @@ class WebSurface:
         self._cdp = page.context.new_cdp_session(page)
         self._latest: Observation | None = None
         self.lease = None  # set when a run can hand control to a human
+        self.last_action: tuple[str, float] | None = None  # (kind, monotonic) for echo suppression
 
     # ---- observation -------------------------------------------------------------------------
 
@@ -101,19 +102,35 @@ class WebSurface:
         tree = self._cdp.send("Page.getFrameTree")["frameTree"]
         frames: list[FrameInfo] = []
         nodes: list[AXNode] = []
+        missing: list[str] = []
         for cdp_frame_id, frame in self._paired_frames(tree, self.page.main_frame):
             path = frame_path(frame)
+            observed = None
+            for attempt in (0, 1):  # a frame mid-navigation throws; give it one more chance
+                try:
+                    observed = self._observe_frame(cdp_frame_id, frame, path, obs_id, counter)
+                    break
+                except PlaywrightError:
+                    if attempt == 0:
+                        self.page.wait_for_timeout(250)
+            if observed is None:
+                # Never silently drop a frame: a half-seen page must look incomplete, not empty.
+                missing.append("/".join(path) or "top")
+                continue
             frames.append(FrameInfo(path=path, url=frame.url))
-            nodes += self._observe_frame(cdp_frame_id, frame, path, obs_id, counter)
+            nodes += observed
         self._cdp.send("Runtime.releaseObjectGroup", {"objectGroup": "cua"})
         self._latest = Observation(
-            observation_id=obs_id, title=self.page.title(), frames=frames, nodes=nodes
+            observation_id=obs_id, title=self.page.title(), frames=frames, nodes=nodes,
+            unavailable_frames=tuple(missing),
         )
         return self._latest
 
     def _paired_frames(self, cdp_node: dict, frame: Frame):
         yield cdp_node["frame"]["id"], frame
-        unmatched = list(frame.child_frames)
+        # After a re-navigation Playwright still lists the replaced frames; pairing with one of
+        # those makes every evaluate fail with "Frame was detached".
+        unmatched = [f for f in frame.child_frames if not f.is_detached()]
         for child in cdp_node.get("childFrames", []):
             info = child["frame"]
             match = next(
@@ -239,6 +256,7 @@ class WebSurface:
                 timeout_s: float = 10, actor: str = "automation") -> str | None:
         if self.lease is not None:
             self.lease.require(actor)  # nobody acts on the session without holding control
+        self.last_action = (kind, time.monotonic())
         timeout = timeout_s * 1000
         match kind:
             case "click":

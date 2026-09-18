@@ -5,3 +5,5 @@ base_url: http://127.0.0.1:5002
 # Tenants may only narrow the product policy.
 policy:
   max_steps: 20
+# Reuses the shared capabilities with this tenant's wording.
+overlay: cu_beta

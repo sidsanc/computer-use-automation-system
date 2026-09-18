@@ -252,14 +252,24 @@ def _walk(value: Any, path: str = "") -> Iterator[tuple[str, Any]]:
 
 
 def literal_leaks(capability: Capability, run_values: Iterable[str]) -> list[str]:
-    """Paths of artifact strings that contain a value observed or supplied during the recording run.
+    """Paths of flow strings that contain a value observed or supplied during the recording run.
 
     The recorder calls this with discovery inputs and extracted outputs; any hit means a run-specific
-    value was frozen into the flow and the artifact must not be saved.
+    value was frozen into the flow, and the artifact must not be saved.
+
+    The input/output declarations are the caller's contract, not recorded state, so a declared enum
+    or a description may legitimately contain a value that this run happened to use. Personal data is
+    the exception: a pii input must never carry its own value as an example.
     """
     needles = {v.strip() for v in run_values if v and len(v.strip()) >= 3}
-    hits = []
-    for path, value in _walk(capability.model_dump(mode="python", exclude={"provenance", "description", "title"})):
-        if isinstance(value, str) and any(n in value for n in needles):
-            hits.append(path)
+    skip = {"provenance", "description", "title", "inputs", "outputs"}
+    hits = [
+        path for path, value in _walk(capability.model_dump(mode="python", exclude=skip))
+        if isinstance(value, str) and any(n in value for n in needles)
+    ]
+    for name, spec in capability.inputs.items():
+        if spec.sensitivity != "pii":
+            continue
+        declared = " ".join([spec.description, *(spec.enum or ())])
+        hits += [f"inputs.{name}" for n in needles if n in declared]
     return hits

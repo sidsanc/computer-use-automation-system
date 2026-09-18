@@ -105,6 +105,17 @@ def test_ladder_falls_through_to_next_rank_when_not_found(page_a, live_a):
     assert WebSurface(page_a).resolve(target).rank == 1
 
 
+def test_frames_are_still_observable_after_renavigation(page_a, live_a):
+    """Playwright keeps replaced frames in child_frames; pairing with one makes every evaluate fail."""
+    page_a.goto(f"{live_a.base_url}/teller", wait_until="load")
+    surface = WebSurface(page_a)
+    surface.settle()
+    obs = surface.observe()
+    assert obs.unavailable_frames == ()
+    assert {f.path for f in obs.frames} == {(), ("nav",), ("main",)}
+    assert only(obs, "link", "Member Inquiry").frame_path == ("nav",)
+
+
 def test_dialog_is_observed(page_a, live_a):
     live_a.faults.set("unknown_dialog")
     goto_main(page_a, live_a, "/teller/member/100234")

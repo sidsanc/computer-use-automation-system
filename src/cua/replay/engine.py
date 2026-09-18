@@ -52,6 +52,8 @@ from cua.secrets import MissingSecretError, SecretStore
 from cua.surface.base import AmbiguousLocatorError, TargetingError
 from cua.surface.web.session import WebSession
 from cua.surface.web.surface import ActionInfo, render_target
+from cua.tenancy.overlay import Overlay
+from cua.tenancy.overlay import apply as apply_overlay
 
 PRECEDENCE = {"escalate": 0, "hard_failure": 1, "business_outcome": 2, "recoverable": 3}
 POLL_MS = 200
@@ -112,6 +114,7 @@ class _Run:
     lease: ControlLease = field(default_factory=ControlLease)
     capture: HumanCapture | None = None
     current_index: int = 0
+    overlay_id: str | None = None
 
     @property
     def surface(self):
@@ -156,9 +159,13 @@ class ReplayEngine:
         app: AppProfile,
         inputs: dict[str, str],
         options: ReplayOptions | None = None,
+        overlay: Overlay | None = None,
     ) -> RunResult:
         options = options or ReplayOptions()
         run_id = uuid.uuid4().hex[:12]
+        base_capability = capability
+        if overlay is not None:
+            capability = apply_overlay(capability, overlay)
         pii = [v for k, v in inputs.items() if k in capability.inputs and capability.inputs[k].sensitivity == "pii"]
         redactor = Redactor(pii_values=pii, sensitive_captions=app.sensitive_captions)
         log = EvidenceLog(options.evidence_root, run_id, "replay", redactor)
@@ -167,8 +174,12 @@ class ReplayEngine:
             policy=app.policy.for_tenant(tenant.base, tenant.policy), options=options, log=log,
             redactor=redactor, raw_inputs=inputs, started_at=datetime.now(UTC), t0=time.monotonic(),
             lease=getattr(self.gate, "lease", None) or ControlLease(),
+            overlay_id=overlay.overlay_id if overlay else None,
         )
-        log.event("run_started", capability=self._ref(capability), tenant=tenant.tenant_id,
+        if overlay is not None:
+            log.event("overlay_applied", overlay=overlay.overlay_id, base_hash=capability_hash(base_capability),
+                      resolved_hash=capability_hash(capability))
+        log.event("run_started", capability=self._ref(run), tenant=tenant.tenant_id,
                   inputs=self._display_inputs(run), attended=options.attended,
                   allow_irreversible=options.allow_irreversible)
         result: RunResult | None = None
@@ -214,7 +225,7 @@ class ReplayEngine:
             return
         run.capture = HumanCapture(run.session.context, run.lease, lambda action, holder: run.log.event(
             "human_action" if holder == "human" else "input_while_automation_held_control",
-            kind=action.kind, control=action.control, value=action.value, frame=action.frame_path))
+            kind=action.kind, control=action.control, value=action.value, frame=action.frame_path), run.surface)
         page = run.session.page
 
         def screenshot() -> bytes | None:
@@ -584,8 +595,9 @@ class ReplayEngine:
             return str(exc).splitlines()[0]
 
     @staticmethod
-    def _ref(capability: Capability) -> CapabilityRef:
-        return CapabilityRef(id=capability.id, version=capability.version, resolved_hash=capability_hash(capability))
+    def _ref(run: _Run) -> CapabilityRef:
+        return CapabilityRef(id=run.capability.id, version=run.capability.version,
+                             resolved_hash=capability_hash(run.capability), overlay=run.overlay_id)
 
     @staticmethod
     def _display_inputs(run: _Run) -> dict[str, str]:
@@ -594,7 +606,7 @@ class ReplayEngine:
 
     def _result(self, run: _Run, status: str, **payload: Any) -> RunResult:
         return RunResult(
-            run_id=run.run_id, status=status, capability=self._ref(run.capability), tenant=run.tenant.tenant_id,
+            run_id=run.run_id, status=status, capability=self._ref(run), tenant=run.tenant.tenant_id,
             app_version=run.app_version, inputs=self._display_inputs(run),
             recoveries_applied=tuple(run.recoveries), locator_ranks=dict(run.ranks),
             human_actions=tuple(run.capture.actions) if run.capture else (),

@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
-DEFAULT_MODEL = "claude-opus-5"
+DEFAULT_MODEL = "claude-sonnet-5"
 
 
 @dataclass

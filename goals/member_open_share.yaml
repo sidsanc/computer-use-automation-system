@@ -1,0 +1,24 @@
+capability_id: member.share_account.open
+title: Open a new share account for a member
+goal: >-
+  Open a new share account of the requested type for the member, with the given initial
+  deposit, and read back the confirmation number from the confirmation screen.
+entry: /teller
+inputs:
+  member_number:
+    type: string
+    description: 6-digit member number
+    pattern: '^\d{6}$'
+    sensitivity: pii
+  share_type:
+    type: string
+    description: Share type exactly as it appears in the Share Type list
+    enum: ['01 Regular Savings', '05 Holiday Club', '20 Money Market']
+  initial_deposit:
+    type: money
+    description: Opening deposit amount in dollars, e.g. 25.00
+outputs:
+  confirmation_id:
+    type: string
+    description: Confirmation number shown after the share is opened
+    sensitivity: public

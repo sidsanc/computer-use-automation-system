@@ -1,0 +1,9 @@
+# Riverbend runs the same CU Teller product as Alpha, at 7.3.x, rebranded and reworded.
+# Only additions are allowed: alternative locators tried first, plus tenant-specific states.
+overlay_id: cu_beta
+product: cu_teller
+description: Riverbend Federal Credit Union (CU Teller 7.3.x) wording overrides.
+
+label_aliases:
+  Member Inquiry: Account Inquiry
+  Member Number: Account No.
