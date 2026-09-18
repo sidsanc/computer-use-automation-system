@@ -1,0 +1,37 @@
+{
+  "run_id": "c7f2d2929668",
+  "status": "failure",
+  "capability": {
+    "id": "member.savings_balance.lookup",
+    "version": "1.0.0",
+    "resolved_hash": "37cdad42abae83e4",
+    "overlay": null
+  },
+  "tenant": "cu_alpha",
+  "app_version": null,
+  "inputs": {
+    "member_number": "[pii]"
+  },
+  "outputs": {},
+  "outcome": null,
+  "failure": {
+    "category": "invalid_input",
+    "step_id": null,
+    "expected": "inputs matching the capability contract",
+    "observed": "input 'member_number' does not match ^\\d{6}$",
+    "evidence": {}
+  },
+  "policy": null,
+  "intervention": null,
+  "recoveries_applied": [],
+  "human_actions": [],
+  "control_transitions": [],
+  "locator_ranks": {},
+  "side_effects": {
+    "committed": [],
+    "possible": []
+  },
+  "started_at": "2026-09-18T21:56:57.585990Z",
+  "duration_ms": 0,
+  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T215657Z_replay_c7f2d2929668"
+}

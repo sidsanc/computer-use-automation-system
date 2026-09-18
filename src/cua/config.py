@@ -35,6 +35,7 @@ class AppProfile(Strict):
     name: str
     policy: ProductPolicy
     sensitive_captions: tuple[str, ...] = ()
+    sensitive_columns: tuple[str, ...] = ()
     login: LoginFlow
     fingerprint: Fingerprint | None = None
     handlers: tuple[Handler, ...] = Field(

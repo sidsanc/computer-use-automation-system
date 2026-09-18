@@ -125,15 +125,23 @@
   },
 
   // Temporarily black out sensitive values for a screenshot; always paired with unmask().
-  mask(captions, values) {
+  mask(captions, values, columns) {
     const want = new Set(captions.map((c) => c.toLowerCase()));
+    const wantColumns = new Set((columns || []).map((c) => c.toLowerCase()));
     const mark = (el) => el.setAttribute("data-cua-masked", "");
     for (const cell of document.querySelectorAll("td,th")) {
       if (cell.querySelector("table")) continue;
       const prev = cell.previousElementSibling;
       const caption = prev ? this.norm(prev.innerText).replace(/:$/, "").trim().toLowerCase() : "";
       const text = this.norm(cell.innerText);
-      if (want.has(caption) || values.some((v) => v && text.includes(v))) mark(cell);
+      let column = "";
+      if (wantColumns.size && cell.parentElement && cell.parentElement.cells) {
+        const header = this.headerRowFor(cell.parentElement);
+        if (header && header !== cell.parentElement) {
+          column = this.cellText(header.cells[cell.cellIndex] || {}).toLowerCase();
+        }
+      }
+      if (want.has(caption) || wantColumns.has(column) || values.some((v) => v && text.includes(v))) mark(cell);
     }
     for (const input of document.querySelectorAll("input")) {
       if (input.type === "password" || values.includes(input.value)) mark(input);

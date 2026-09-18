@@ -1,0 +1,298 @@
+{
+  "observation_id": "41f33f0a",
+  "title": "CU Teller - Alpha Community Credit Union",
+  "frames": [
+    {
+      "path": [],
+      "url": "http://127.0.0.1:64208/teller"
+    },
+    {
+      "path": [
+        "nav"
+      ],
+      "url": "http://127.0.0.1:64208/teller/nav"
+    },
+    {
+      "path": [
+        "main"
+      ],
+      "url": "http://127.0.0.1:64208/teller/member/[pii]"
+    }
+  ],
+  "nodes": [
+    {
+      "eid": "e1",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "MAIN MENU",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 13
+    },
+    {
+      "eid": "e2",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Teller Home",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 17
+    },
+    {
+      "eid": "e6",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Teller Home",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 18
+    },
+    {
+      "eid": "e3",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Member Inquiry",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 22
+    },
+    {
+      "eid": "e7",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Member Inquiry",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 23
+    },
+    {
+      "eid": "e4",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Reports",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 3,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 27
+    },
+    {
+      "eid": "e8",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Reports",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 3,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 28
+    },
+    {
+      "eid": "e5",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Sign Off",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 4,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 32
+    },
+    {
+      "eid": "e9",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Sign Off",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 4,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 33
+    },
+    {
+      "eid": "e10",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Alpha Community Credit Union :: Error",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 16
+    },
+    {
+      "eid": "e11",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "500 INTERNAL SERVER ERROR",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 26
+    },
+    {
+      "eid": "e12",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "CORE HOST UNAVAILABLE (RC=0x8F). Retry later or contact the help desk.",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 30
+    },
+    {
+      "eid": "e13",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "CU Teller v7.2.4 © Legacy Core Systems",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 40
+    }
+  ],
+  "unavailable_frames": []
+}

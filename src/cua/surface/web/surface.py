@@ -335,12 +335,14 @@ class WebSurface:
             self.page.wait_for_timeout(250)
         return False
 
-    def screenshot_masked(self, captions: list[str], values: list[str], jpeg: bool = False) -> tuple[bytes, int]:
+    def screenshot_masked(self, captions: list[str], values: list[str], columns: list[str] | None = None,
+                          jpeg: bool = False) -> tuple[bytes, int]:
         masked = 0
         for frame in self.page.frames:
             try:
                 install_helpers(frame)
-                masked += frame.evaluate("([c, v]) => window.__cuaH.mask(c, v)", [captions, values])
+                masked += frame.evaluate("([c, v, k]) => window.__cuaH.mask(c, v, k)",
+                                         [captions, values, columns or []])
             except PlaywrightError:
                 continue
         try:

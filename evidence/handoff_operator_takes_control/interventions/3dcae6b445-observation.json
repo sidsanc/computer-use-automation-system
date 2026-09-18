@@ -1,0 +1,871 @@
+{
+  "observation_id": "7fb62cad",
+  "title": "CU Teller - Alpha Community Credit Union",
+  "frames": [
+    {
+      "path": [],
+      "url": "http://127.0.0.1:64208/teller"
+    },
+    {
+      "path": [
+        "nav"
+      ],
+      "url": "http://127.0.0.1:64208/teller/nav"
+    },
+    {
+      "path": [
+        "main"
+      ],
+      "url": "http://127.0.0.1:64208/teller/member/[pii]"
+    }
+  ],
+  "nodes": [
+    {
+      "eid": "e2",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "MAIN MENU",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 13
+    },
+    {
+      "eid": "e3",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Teller Home",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 17
+    },
+    {
+      "eid": "e7",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Teller Home",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 18
+    },
+    {
+      "eid": "e4",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Member Inquiry",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 22
+    },
+    {
+      "eid": "e8",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Member Inquiry",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 23
+    },
+    {
+      "eid": "e5",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Reports",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 3,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 27
+    },
+    {
+      "eid": "e9",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Reports",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 3,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 28
+    },
+    {
+      "eid": "e6",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Sign Off",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 4,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 32
+    },
+    {
+      "eid": "e10",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Sign Off",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 4,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 33
+    },
+    {
+      "eid": null,
+      "frame_path": [
+        "nav"
+      ],
+      "role": "StaticText",
+      "name": "AUTOMATION IN CONTROL — please do not interact with this window",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": null,
+      "has_control": false,
+      "order": 38
+    },
+    {
+      "eid": "e13",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Alpha Community Credit Union :: Member Detail",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 16
+    },
+    {
+      "eid": "e14",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Member Number:",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 26
+    },
+    {
+      "eid": "e15",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "[pii]",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 0,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 28
+    },
+    {
+      "eid": "e16",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Name:",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 32
+    },
+    {
+      "eid": "e17",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "[pii]",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 1,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 34
+    },
+    {
+      "eid": "e18",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Member Since:",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 38
+    },
+    {
+      "eid": "e19",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "[pii]",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 2,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 40
+    },
+    {
+      "eid": "e20",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Status:",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 3,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 44
+    },
+    {
+      "eid": "e21",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "ACTIVE",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 3,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 46
+    },
+    {
+      "eid": "e22",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "SHARES",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 56
+    },
+    {
+      "eid": "e23",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Share ID",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 62
+    },
+    {
+      "eid": "e24",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Description",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 1,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 65
+    },
+    {
+      "eid": "e25",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Balance",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 1,
+        "col": 2,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 68
+    },
+    {
+      "eid": "e26",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "S01",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 2,
+        "col": 0,
+        "column": "Share ID",
+        "row_values": {
+          "Share ID": "S01",
+          "Description": "Regular Savings",
+          "Balance": "[financial]"
+        }
+      },
+      "has_control": false,
+      "order": 74
+    },
+    {
+      "eid": "e27",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Regular Savings",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 2,
+        "col": 1,
+        "column": "Description",
+        "row_values": {
+          "Share ID": "S01",
+          "Description": "Regular Savings",
+          "Balance": "[financial]"
+        }
+      },
+      "has_control": false,
+      "order": 77
+    },
+    {
+      "eid": "e28",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "[financial]",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 2,
+        "col": 2,
+        "column": "Balance",
+        "row_values": {
+          "Share ID": "S01",
+          "Description": "Regular Savings",
+          "Balance": "[financial]"
+        }
+      },
+      "has_control": false,
+      "order": 80
+    },
+    {
+      "eid": "e29",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "S10",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 3,
+        "col": 0,
+        "column": "Share ID",
+        "row_values": {
+          "Share ID": "S10",
+          "Description": "Share Draft",
+          "Balance": "[financial]"
+        }
+      },
+      "has_control": false,
+      "order": 86
+    },
+    {
+      "eid": "e30",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Share Draft",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 3,
+        "col": 1,
+        "column": "Description",
+        "row_values": {
+          "Share ID": "S10",
+          "Description": "Share Draft",
+          "Balance": "[financial]"
+        }
+      },
+      "has_control": false,
+      "order": 89
+    },
+    {
+      "eid": "e31",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "[financial]",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 3,
+        "col": 2,
+        "column": "Balance",
+        "row_values": {
+          "Share ID": "S10",
+          "Description": "Share Draft",
+          "Balance": "[financial]"
+        }
+      },
+      "has_control": false,
+      "order": 92
+    },
+    {
+      "eid": "e32",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "",
+      "name_source": "none",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 3,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 103
+    },
+    {
+      "eid": "e38",
+      "frame_path": [
+        "main"
+      ],
+      "role": "button",
+      "name": "Open New Share",
+      "name_source": "native",
+      "value": "Open New Share",
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 3,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 105
+    },
+    {
+      "eid": "e33",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "",
+      "name_source": "none",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 3,
+        "row": 0,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 107
+    },
+    {
+      "eid": "e39",
+      "frame_path": [
+        "main"
+      ],
+      "role": "button",
+      "name": "New Inquiry",
+      "name_source": "native",
+      "value": "New Inquiry",
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 3,
+        "row": 0,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 109
+    },
+    {
+      "eid": "e11",
+      "frame_path": [
+        "main"
+      ],
+      "role": "dialog",
+      "name": "Compliance Review",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": true,
+      "table": null,
+      "has_control": false,
+      "order": 112
+    },
+    {
+      "eid": "e35",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "COMPLIANCE REVIEW REQUIRED",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": true,
+      "table": {
+        "table": 4,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 118
+    },
+    {
+      "eid": "e36",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "CMP-417 This record has a pending compliance review flag. An authorized officer must acknowledge before servicing continues.",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": true,
+      "table": {
+        "table": 4,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 122
+    },
+    {
+      "eid": "e37",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Acknowledge",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": true,
+      "table": {
+        "table": 4,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 126
+    },
+    {
+      "eid": "e40",
+      "frame_path": [
+        "main"
+      ],
+      "role": "button",
+      "name": "Acknowledge",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": true,
+      "table": {
+        "table": 4,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 127
+    },
+    {
+      "eid": "e34",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "CU Teller v7.2.4 © Legacy Core Systems",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 5,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 138
+    },
+    {
+      "eid": null,
+      "frame_path": [
+        "main"
+      ],
+      "role": "StaticText",
+      "name": "AUTOMATION IN CONTROL — please do not interact with this window",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": null,
+      "has_control": false,
+      "order": 142
+    }
+  ],
+  "unavailable_frames": []
+}

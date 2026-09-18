@@ -1,0 +1,65 @@
+{
+  "run_id": "a15a37ae3d1e",
+  "status": "success",
+  "capability": {
+    "id": "member.share_account.open",
+    "version": "1.0.0",
+    "resolved_hash": "fd7564de0314e748",
+    "overlay": null
+  },
+  "tenant": "cu_alpha",
+  "app_version": "7.2.4",
+  "inputs": {
+    "member_number": "[pii]",
+    "share_type": "05 Holiday Club",
+    "initial_deposit": "25.00"
+  },
+  "outputs": {
+    "confirmation_id": "[masked]"
+  },
+  "outcome": null,
+  "failure": null,
+  "policy": null,
+  "intervention": null,
+  "recoveries_applied": [],
+  "human_actions": [],
+  "control_transitions": [
+    {
+      "at": "2026-09-18T21:57:08.010719+00:00",
+      "from": "automation",
+      "to": "paused",
+      "actor": "automation",
+      "note": "intervention 1e99890293"
+    },
+    {
+      "at": "2026-09-18T21:57:08.012224+00:00",
+      "from": "paused",
+      "to": "automation",
+      "actor": "evidence-operator",
+      "note": "approved"
+    }
+  ],
+  "locator_ranks": {
+    "s01_navigate_to_member_inquiry_to_locate_the": 0,
+    "s02_enter_member_number_to_search_for_the_me": 0,
+    "s03_search_for_the_member": 0,
+    "s04_open_a_new_share_account_for_this_member": 0,
+    "s05_select_the_requested_share_type": 0,
+    "s06_enter_the_initial_deposit_amount": 0,
+    "s07_continue_to_confirm_opening_the_new_shar": 0,
+    "s08_confirm_opening_of_the_new_share_account": 0,
+    "s09_read_the_confirmation_number_from_the_su": 0
+  },
+  "side_effects": {
+    "committed": [
+      {
+        "step_id": "s08_confirm_opening_of_the_new_share_account",
+        "actor": "automation"
+      }
+    ],
+    "possible": []
+  },
+  "started_at": "2026-09-18T21:57:07.230314Z",
+  "duration_ms": 906,
+  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T215707Z_replay_a15a37ae3d1e"
+}

@@ -1,0 +1,361 @@
+{
+  "observation_id": "c740604e",
+  "title": "CU Teller - Riverbend Federal Credit Union",
+  "frames": [
+    {
+      "path": [],
+      "url": "http://127.0.0.1:64209/teller"
+    },
+    {
+      "path": [
+        "nav"
+      ],
+      "url": "http://127.0.0.1:64209/teller/nav"
+    },
+    {
+      "path": [
+        "main"
+      ],
+      "url": "http://127.0.0.1:64209/teller/home"
+    }
+  ],
+  "nodes": [
+    {
+      "eid": "e1",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "MAIN MENU",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 13
+    },
+    {
+      "eid": "e2",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Account Inquiry",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 17
+    },
+    {
+      "eid": "e6",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Account Inquiry",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 18
+    },
+    {
+      "eid": "e3",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Teller Home",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 22
+    },
+    {
+      "eid": "e7",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Teller Home",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 23
+    },
+    {
+      "eid": "e4",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Reports",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 3,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 27
+    },
+    {
+      "eid": "e8",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Reports",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 3,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 28
+    },
+    {
+      "eid": "e5",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "cell",
+      "name": "Sign Off",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 4,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": true,
+      "order": 32
+    },
+    {
+      "eid": "e9",
+      "frame_path": [
+        "nav"
+      ],
+      "role": "link",
+      "name": "Sign Off",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 4,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 33
+    },
+    {
+      "eid": "e10",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Riverbend Federal Credit Union :: Teller Home",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 0,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 16
+    },
+    {
+      "eid": "e11",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Operator:",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 26
+    },
+    {
+      "eid": "e12",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "[secret]",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 0,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 28
+    },
+    {
+      "eid": "e13",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Branch:",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 1,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 32
+    },
+    {
+      "eid": "e14",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "001 MAIN OFFICE",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 1,
+        "col": 1,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 34
+    },
+    {
+      "eid": "e15",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "Select a function from the main menu.",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 1,
+        "row": 2,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 38
+    },
+    {
+      "eid": "e16",
+      "frame_path": [
+        "main"
+      ],
+      "role": "cell",
+      "name": "CU Teller v7.3.1 © Legacy Core Systems",
+      "name_source": "native",
+      "value": null,
+      "disabled": false,
+      "in_dialog": false,
+      "table": {
+        "table": 2,
+        "row": 0,
+        "col": 0,
+        "column": null,
+        "row_values": {}
+      },
+      "has_control": false,
+      "order": 48
+    }
+  ],
+  "unavailable_frames": []
+}

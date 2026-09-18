@@ -1,0 +1,41 @@
+{
+  "run_id": "de548c2a98b3",
+  "status": "success",
+  "capability": {
+    "id": "member.savings_balance.lookup",
+    "version": "1.0.0",
+    "resolved_hash": "633941d41018b5a8",
+    "overlay": "cu_beta"
+  },
+  "tenant": "cu_beta",
+  "app_version": "7.3.1",
+  "inputs": {
+    "member_number": "[pii]"
+  },
+  "outputs": {
+    "savings_balance": {
+      "amount": "[masked]",
+      "currency": "USD"
+    }
+  },
+  "outcome": null,
+  "failure": null,
+  "policy": null,
+  "intervention": null,
+  "recoveries_applied": [],
+  "human_actions": [],
+  "control_transitions": [],
+  "locator_ranks": {
+    "s01_open_member_inquiry_from_main_menu": 0,
+    "s02_enter_the_member_number_in_the_search_fi": 0,
+    "s03_submit_the_member_search": 0,
+    "s04_read_the_regular_savings_share_balance": 0
+  },
+  "side_effects": {
+    "committed": [],
+    "possible": []
+  },
+  "started_at": "2026-09-18T21:57:18.723283Z",
+  "duration_ms": 766,
+  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T215718Z_replay_de548c2a98b3"
+}

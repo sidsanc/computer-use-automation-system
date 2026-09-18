@@ -167,7 +167,8 @@ class ReplayEngine:
         if overlay is not None:
             capability = apply_overlay(capability, overlay)
         pii = [v for k, v in inputs.items() if k in capability.inputs and capability.inputs[k].sensitivity == "pii"]
-        redactor = Redactor(pii_values=pii, sensitive_captions=app.sensitive_captions)
+        redactor = Redactor(pii_values=pii, sensitive_captions=app.sensitive_captions,
+                            sensitive_columns=app.sensitive_columns)
         log = EvidenceLog(options.evidence_root, run_id, "replay", redactor)
         run = _Run(
             run_id=run_id, capability=capability, tenant=tenant, app=app,
@@ -230,7 +231,8 @@ class ReplayEngine:
 
         def screenshot() -> bytes | None:
             try:
-                png, _ = run.surface.screenshot_masked(list(run.app.sensitive_captions), run.pii_values())
+                png, _ = run.surface.screenshot_masked(list(run.app.sensitive_captions), run.pii_values(),
+                                                       columns=list(run.app.sensitive_columns))
                 return png
             except PlaywrightError:
                 return None
@@ -566,7 +568,8 @@ class ReplayEngine:
             return None, None
         shot = obs = None
         try:
-            png, masked = run.surface.screenshot_masked(list(run.app.sensitive_captions), run.pii_values())
+            png, masked = run.surface.screenshot_masked(list(run.app.sensitive_captions), run.pii_values(),
+                                                       columns=list(run.app.sensitive_columns))
             shot = run.log.relative(run.log.attach_masked_bytes(f"{prefix}.png", png, masking=f"blackout:{masked}"))
         except PlaywrightError:
             pass

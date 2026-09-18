@@ -1,0 +1,24 @@
+{
+  "intervention_id": "1e99890293",
+  "run_id": "a15a37ae3d1e",
+  "mode": "replay",
+  "capability_id": "member.share_account.open",
+  "goal": null,
+  "step_id": "s08_confirm_opening_of_the_new_share_account",
+  "step_intent": "Confirm opening of the new share account (posts to core)",
+  "reason_code": "approval_required",
+  "reason": "destination matches an irreversible route; a human must approve this step",
+  "allowed": [
+    "approve",
+    "deny",
+    "abort"
+  ],
+  "frame_urls": {
+    "top": "http://127.0.0.1:64208/teller",
+    "nav": "http://127.0.0.1:64208/teller/nav",
+    "main": "http://127.0.0.1:64208/teller/member/[pii]/open-share"
+  },
+  "screenshot": "interventions/1e99890293.png",
+  "observation": "interventions/1e99890293-observation.json",
+  "created_at": "2026-09-18T21:57:08.010719Z"
+}

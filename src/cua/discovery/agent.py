@@ -189,7 +189,8 @@ class DiscoveryAgent:
         options = options or DiscoveryOptions()
         run_id = uuid.uuid4().hex[:12]
         pii = [v for k, v in inputs.items() if k in goal.inputs and goal.inputs[k].sensitivity == "pii"]
-        redactor = Redactor(pii_values=pii, sensitive_captions=app.sensitive_captions)
+        redactor = Redactor(pii_values=pii, sensitive_captions=app.sensitive_captions,
+                            sensitive_columns=app.sensitive_columns)
         log = EvidenceLog(options.evidence_root, run_id, "discovery", redactor)
         ctx = _Ctx(run_id=run_id, goal=goal, tenant=tenant, app=app,
                    policy=app.policy.for_tenant(tenant.base, tenant.policy), inputs={}, secrets={}, log=log,
@@ -252,7 +253,8 @@ class DiscoveryAgent:
 
         def screenshot() -> bytes | None:
             try:
-                png, _ = ctx.surface.screenshot_masked(list(ctx.app.sensitive_captions), ctx.pii_values())
+                png, _ = ctx.surface.screenshot_masked(list(ctx.app.sensitive_captions), ctx.pii_values(),
+                                                       columns=list(ctx.app.sensitive_columns))
                 return png
             except PlaywrightError:
                 return None
@@ -370,8 +372,8 @@ class DiscoveryAgent:
         ctx.log.event("observed", turn=turn, frames=["/".join(f.path) or "top" for f in ctx.obs.frames],
                       unavailable=list(ctx.obs.unavailable_frames), nodes=len(ctx.obs.nodes))
         view = ctx.redactor.observation(ctx.obs).render()
-        image, masked = ctx.surface.screenshot_masked(list(ctx.app.sensitive_captions),
-                                                      ctx.pii_values(), jpeg=True)
+        image, masked = ctx.surface.screenshot_masked(list(ctx.app.sensitive_captions), ctx.pii_values(),
+                                                      columns=list(ctx.app.sensitive_columns), jpeg=True)
         ctx.log.attach_masked_bytes(f"steps/{turn:02d}.jpg", image, masking=f"blackout:{masked}")
         text = "\n".join([*notes, view]) if notes else view
         return [
@@ -548,7 +550,8 @@ class DiscoveryAgent:
         intervention_id = uuid.uuid4().hex[:10]
         shot = None
         try:
-            png, masked = ctx.surface.screenshot_masked(list(ctx.app.sensitive_captions), ctx.pii_values())
+            png, masked = ctx.surface.screenshot_masked(list(ctx.app.sensitive_captions), ctx.pii_values(),
+                                                       columns=list(ctx.app.sensitive_columns))
             shot = ctx.log.relative(ctx.log.attach_masked_bytes(f"interventions/{intervention_id}.png", png,
                                                                 masking=f"blackout:{masked}"))
         except PlaywrightError:

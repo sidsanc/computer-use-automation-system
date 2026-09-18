@@ -1,0 +1,24 @@
+{
+  "intervention_id": "41e0489524",
+  "run_id": "c59626c24799",
+  "mode": "discovery",
+  "capability_id": "member.share_account.open",
+  "goal": "Open a new share account of the requested type for the member, with the given initial deposit, and read back the confirmation number from the confirmation screen.",
+  "step_id": null,
+  "step_intent": null,
+  "reason_code": "approval_required",
+  "reason": "Confirm opening of the new share account (posts to core): destination matches an irreversible route; a human must approve this step",
+  "allowed": [
+    "approve",
+    "deny",
+    "abort"
+  ],
+  "frame_urls": {
+    "top": "http://127.0.0.1:5001/teller",
+    "nav": "http://127.0.0.1:5001/teller/nav",
+    "main": "http://127.0.0.1:5001/teller/member/[pii]/open-share"
+  },
+  "screenshot": "interventions/41e0489524.png",
+  "observation": null,
+  "created_at": "2026-09-18T20:46:55.159213Z"
+}

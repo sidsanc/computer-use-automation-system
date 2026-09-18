@@ -1,0 +1,39 @@
+{
+  "run_id": "6a19e69fad6e",
+  "status": "business_outcome",
+  "capability": {
+    "id": "member.savings_balance.lookup",
+    "version": "1.0.0",
+    "resolved_hash": "37cdad42abae83e4",
+    "overlay": null
+  },
+  "tenant": "cu_alpha",
+  "app_version": "7.2.4",
+  "inputs": {
+    "member_number": "[pii]"
+  },
+  "outputs": {},
+  "outcome": {
+    "code": "member_not_found",
+    "message": "No member exists with that number.",
+    "step_id": "s03_submit_the_member_search"
+  },
+  "failure": null,
+  "policy": null,
+  "intervention": null,
+  "recoveries_applied": [],
+  "human_actions": [],
+  "control_transitions": [],
+  "locator_ranks": {
+    "s01_open_member_inquiry_from_main_menu": 0,
+    "s02_enter_the_member_number_in_the_search_fi": 0,
+    "s03_submit_the_member_search": 0
+  },
+  "side_effects": {
+    "committed": [],
+    "possible": []
+  },
+  "started_at": "2026-09-18T21:56:56.192303Z",
+  "duration_ms": 703,
+  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T215656Z_replay_6a19e69fad6e"
+}

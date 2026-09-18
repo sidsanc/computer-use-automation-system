@@ -1,0 +1,46 @@
+{
+  "run_id": "6fdb6572a020",
+  "status": "policy_blocked",
+  "capability": {
+    "id": "member.share_account.open",
+    "version": "1.0.0",
+    "resolved_hash": "fd7564de0314e748",
+    "overlay": null
+  },
+  "tenant": "cu_alpha",
+  "app_version": "7.2.4",
+  "inputs": {
+    "member_number": "[pii]",
+    "share_type": "05 Holiday Club",
+    "initial_deposit": "25.00"
+  },
+  "outputs": {},
+  "outcome": null,
+  "failure": null,
+  "policy": {
+    "rule": "irreversible_unattended",
+    "step_id": "s08_confirm_opening_of_the_new_share_account",
+    "reason": "destination matches an irreversible route; unattended replay needs an approved capability and allow_irreversible"
+  },
+  "intervention": null,
+  "recoveries_applied": [],
+  "human_actions": [],
+  "control_transitions": [],
+  "locator_ranks": {
+    "s01_navigate_to_member_inquiry_to_locate_the": 0,
+    "s02_enter_member_number_to_search_for_the_me": 0,
+    "s03_search_for_the_member": 0,
+    "s04_open_a_new_share_account_for_this_member": 0,
+    "s05_select_the_requested_share_type": 0,
+    "s06_enter_the_initial_deposit_amount": 0,
+    "s07_continue_to_confirm_opening_the_new_shar": 0,
+    "s08_confirm_opening_of_the_new_share_account": 0
+  },
+  "side_effects": {
+    "committed": [],
+    "possible": []
+  },
+  "started_at": "2026-09-18T21:57:06.493599Z",
+  "duration_ms": 733,
+  "evidence_dir": "D:/Projects/InterfaceAI-Take-Home-Assessment/runs/evidence/20260918T215706Z_replay_6fdb6572a020"
+}

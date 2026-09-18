@@ -1,0 +1,281 @@
+{
+  "schema_version": "1.0",
+  "id": "member.savings_balance.lookup",
+  "version": "1.0.0",
+  "status": "draft",
+  "title": "Look up a member's Regular Savings balance",
+  "description": "Find the member by their member number and read the current balance of their Regular Savings share.",
+  "app": {
+    "product": "cu_teller",
+    "versions": ">=7.2,<8"
+  },
+  "entry": {
+    "path": "/teller"
+  },
+  "inputs": {
+    "member_number": {
+      "type": "string",
+      "description": "6-digit member number",
+      "pattern": "^\\d{6}$",
+      "enum": null,
+      "sensitivity": "pii"
+    }
+  },
+  "outputs": {
+    "savings_balance": {
+      "type": "money",
+      "description": "Current balance of the member's Regular Savings share",
+      "currency": "USD",
+      "sensitivity": "financial"
+    }
+  },
+  "secrets": [],
+  "steps": [
+    {
+      "id": "s01_open_member_inquiry_from_main_menu",
+      "intent": "Open Member Inquiry from main menu",
+      "action": {
+        "kind": "click"
+      },
+      "target": {
+        "frame_path": [
+          "nav"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "role_name",
+              "role": "link",
+              "name": "Member Inquiry"
+            },
+            "rationale": "Accessible role and name; independent of markup structure and styling."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > table > tbody > tr:nth-of-type(3) > td > a",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [
+        {
+          "kind": "frame_url",
+          "frame_path": [
+            "main"
+          ],
+          "path": "/teller/inquiry"
+        }
+      ],
+      "effect": "navigation",
+      "irreversible": false,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation"
+    },
+    {
+      "id": "s02_enter_the_member_number_in_the_search_fi",
+      "intent": "Enter the member number in the search field",
+      "action": {
+        "kind": "fill",
+        "value": {
+          "input": "member_number"
+        }
+      },
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "label_neighbor",
+              "role": "textbox",
+              "label": "Member Number"
+            },
+            "rationale": "Control has no accessible name; the caption in the neighbouring cell is what an operator reads and survives styling and layout changes."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > form > table > tbody > tr > td:nth-of-type(2) > input",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [],
+      "effect": "none",
+      "irreversible": false,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation"
+    },
+    {
+      "id": "s03_submit_the_member_search",
+      "intent": "Submit the member search",
+      "action": {
+        "kind": "click"
+      },
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Search"
+            },
+            "rationale": "Accessible role and name; independent of markup structure and styling."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > form > table > tbody > tr > td:nth-of-type(3) > input",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [
+        {
+          "kind": "frame_url",
+          "frame_path": [
+            "main"
+          ],
+          "path": "/teller/member/{{inputs.member_number}}"
+        }
+      ],
+      "effect": "navigation",
+      "irreversible": false,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation"
+    },
+    {
+      "id": "s04_read_the_regular_savings_share_balance",
+      "intent": "Read the Regular Savings share balance",
+      "action": {
+        "kind": "extract",
+        "output": "savings_balance"
+      },
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "table_cell",
+              "column": "Balance",
+              "row": {
+                "column": "Share ID",
+                "equals": "S01"
+              }
+            },
+            "rationale": "Addressed by column header plus a key cell in the same row; independent of row order and of the cell's own (changing) value."
+          },
+          {
+            "locator": {
+              "kind": "table_cell",
+              "column": "Balance",
+              "row": {
+                "column": "Description",
+                "equals": "Regular Savings"
+              }
+            },
+            "rationale": "Addressed by column header plus a key cell in the same row; independent of row order and of the cell's own (changing) value."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > table:nth-of-type(3) > tbody > tr:nth-of-type(3) > td:nth-of-type(3)",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      },
+      "pre": [],
+      "post": [],
+      "effect": "none",
+      "irreversible": false,
+      "timeout_s": 10.0,
+      "handlers": [],
+      "performed_by": "automation"
+    }
+  ],
+  "success": [
+    {
+      "kind": "frame_url",
+      "frame_path": [
+        "main"
+      ],
+      "path": "/teller/member/{{inputs.member_number}}"
+    },
+    {
+      "kind": "element_present",
+      "target": {
+        "frame_path": [
+          "main"
+        ],
+        "locators": [
+          {
+            "locator": {
+              "kind": "table_cell",
+              "column": "Balance",
+              "row": {
+                "column": "Share ID",
+                "equals": "S01"
+              }
+            },
+            "rationale": "Addressed by column header plus a key cell in the same row; independent of row order and of the cell's own (changing) value."
+          },
+          {
+            "locator": {
+              "kind": "table_cell",
+              "column": "Balance",
+              "row": {
+                "column": "Description",
+                "equals": "Regular Savings"
+              }
+            },
+            "rationale": "Addressed by column header plus a key cell in the same row; independent of row order and of the cell's own (changing) value."
+          },
+          {
+            "locator": {
+              "kind": "css",
+              "selector": "body > table:nth-of-type(3) > tbody > tr:nth-of-type(3) > td:nth-of-type(3)",
+              "brittle": true
+            },
+            "rationale": "Structural path; brittle under layout changes, last resort."
+          }
+        ]
+      }
+    }
+  ],
+  "handlers": [],
+  "provenance": {
+    "method": "llm_discovery",
+    "recorded_at": "2026-09-18T19:54:17.923396Z",
+    "recorder_version": "1.0",
+    "run_id": "eaffa8b21ea4",
+    "model_id": "claude-opus-5",
+    "prompt_template_hash": "9f2fca3be2b03004",
+    "step_count": 4,
+    "token_usage": {
+      "input": 11547,
+      "output": 458
+    },
+    "transcript_ref": "events.jsonl"
+  }
+}

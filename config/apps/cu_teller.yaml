@@ -24,6 +24,9 @@ policy:
 
 # Values shown next to these captions are personal data and are masked in logs and model context.
 sensitive_captions: [Name, Member Since]
+# Amounts under these column headers are regulated financial data: masked in logs, screenshots
+# and model context. Replay still reads the real value and returns it to the caller.
+sensitive_columns: [Balance, Available, Initial Deposit]
 
 fingerprint:
   text_regex: 'CU Teller v(\d+\.\d+\.\d+)'
