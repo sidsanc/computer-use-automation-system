@@ -1,5 +1,7 @@
 # Computer-Use Automation System
 
+[![ci](https://github.com/sidsanc/computer-use-automation-system/actions/workflows/ci.yml/badge.svg)](https://github.com/sidsanc/computer-use-automation-system/actions/workflows/ci.yml)
+
 An LLM discovers how to do a task in a legacy back-office UI **once**. The run becomes a typed,
 versioned **capability artifact**. After that the artifact **replays deterministically with no model
 in the loop**, behind a policy gate, with a real path to hand the live session to a human.
