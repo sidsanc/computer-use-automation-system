@@ -30,3 +30,6 @@ test-results/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local prep artifacts, not part of the submission
+.artifact/
