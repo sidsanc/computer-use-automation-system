@@ -5,6 +5,77 @@ diagram and the code it claims to document can be checked against each other.
 
 ---
 
+## 0. Module map
+
+Import-time dependencies, not runtime flow. The point of this one: **both runners sit on the same
+foundations.** Discovery is not a lax path with the guardrails bolted onto replay afterwards — it
+observes through the same surface, passes the same policy gate, redacts through the same chokepoint
+and escalates through the same port.
+
+```mermaid
+flowchart TD
+    CLI["cli.py · demo.py"]
+
+    subgraph Runners
+        DA["discovery/agent.py<br/>goal · llm · recorder"]
+        RE["replay/engine.py"]
+        CAT["catalog.py"]
+    end
+
+    subgraph Foundations["Used by both runners"]
+        SU["surface/web/surface.py<br/>base · session · frames · helpers.js"]
+        PG["policy/gate.py"]
+        RD["policy/redact.py"]
+        EV["evidence/log.py"]
+        HG["handoff/gate.py<br/>(port: HumanGate)"]
+        SEC["secrets.py"]
+    end
+
+    subgraph Adapters["Handoff adapters"]
+        CON["handoff/console.py<br/>(AttendedGate + operator UI)"]
+        CTL["handoff/control.py"]
+        CAP["handoff/capture.py"]
+    end
+
+    subgraph Contracts
+        ART["schema/artifact.py"]
+        ACT["actions.py"]
+        CND["schema/conditions.py"]
+        TGT["schema/targets.py"]
+        RES["schema/results.py"]
+        CFG["config.py"]
+        OVL["tenancy/overlay.py"]
+    end
+
+    CLI --&gt; DA & RE & CAT
+    DA --&gt; SU & PG & RD & EV & HG & SEC & ART & CFG
+    RE --&gt; SU & PG & RD & EV & HG & SEC & ART & CFG & OVL & RES
+    CAT --&gt; ART & RES & CFG
+    CON --&gt; HG & CTL & CAP & EV
+    DA --&gt; CTL & CAP
+    RE --&gt; CTL & CAP
+    ART --&gt; ACT & CND & TGT
+    RES --&gt; CND
+    OVL --&gt; ART & TGT
+    CFG --&gt; PG
+    SU --&gt; TGT & CND
+```
+
+Two seams this makes visible:
+
+- **`handoff/gate.py` is a port, not a delegator.** It defines `HumanGate` and `UnattendedGate` and
+  imports nothing but `schema/base.py`. `console.py` imports *it*. That inversion is why a scripted
+  operator can stand in for a person in tests and in the evidence script without the engine knowing.
+- **`catalog.py` never imports the engine.** `run_agent_request` takes an `invoke` callable, so the
+  agent-facing layer has no dependency on the execution layer — the same catalogue could sit behind
+  an MCP server or an HTTP endpoint.
+
+(If you generate a version of this with clickable `click` directives, note that GitHub's Mermaid
+renderer ignores them; the file paths in the table at the end of this document are the reliable
+navigation aid.)
+
+---
+
 ## 1. The whole system
 
 Discovery is paid for once; replay is the production path; the catalogue is how an agent reaches it.
