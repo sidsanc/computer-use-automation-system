@@ -73,13 +73,14 @@ def ask(
     from cua.discovery.llm import AnthropicModelClient
     from cua.replay.engine import ReplayEngine, ReplayOptions
     from cua.secrets import EnvSecretStore
+    from cua.surface.web.session import WebSessions
 
     book = Catalog(Path("capabilities"))
     tenant_config, app_profile = book.target(tenant)
     overlay = book.overlay_for(tenant_config)
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=not headed)
-        engine = ReplayEngine(browser, EnvSecretStore())
+        engine = ReplayEngine(WebSessions(browser), EnvSecretStore())
 
         def invoke(entry, arguments):
             typer.secho(f"  agent calls {entry.name} with {json.dumps(arguments)}", fg="cyan", err=True)
@@ -197,6 +198,7 @@ def replay(
     from cua.config import Workspace
     from cua.replay.engine import ReplayEngine, ReplayOptions
     from cua.secrets import EnvSecretStore
+    from cua.surface.web.session import WebSessions
 
     cap = _load_capability(capability)
     workspace = Workspace()
@@ -207,7 +209,7 @@ def replay(
     tenant_overlay = workspace.overlay(tenant_config.overlay) if overlay and tenant_config.overlay else None
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=not headed and not attended)
-        result = ReplayEngine(browser, EnvSecretStore(), gate).run(
+        result = ReplayEngine(WebSessions(browser), EnvSecretStore(), gate).run(
             cap, tenant_config, workspace.app(tenant_config.app), _params(param), options, overlay=tenant_overlay)
         browser.close()
     if console is not None:
@@ -242,6 +244,7 @@ def discover(
     from cua.discovery.llm import AnthropicModelClient
     from cua.replay.engine import ReplayEngine, ReplayOptions
     from cua.secrets import EnvSecretStore
+    from cua.surface.web.session import WebSessions
 
     goal = GoalSpec.load(Path(goal_file))
     workspace = Workspace()
@@ -251,12 +254,12 @@ def discover(
     gate, console = _operator_gate(attended, operator_port, operator_timeout)
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=not headed and not attended)
-        agent = DiscoveryAgent(browser, AnthropicModelClient(model, effort), EnvSecretStore(), gate)
+        agent = DiscoveryAgent(WebSessions(browser), AnthropicModelClient(model, effort), EnvSecretStore(), gate)
         result = agent.run(goal, tenant_config, app_profile, inputs,
                            DiscoveryOptions(evidence_root=Path(evidence_root), video=video))
         summary = {"discovery": {k: v for k, v in vars(result).items() if k != "capability"}}
         if result.capability is not None:
-            verification = ReplayEngine(browser, EnvSecretStore()).run(
+            verification = ReplayEngine(WebSessions(browser), EnvSecretStore()).run(
                 result.capability, tenant_config, app_profile, _params(verify_param) or inputs,
                 ReplayOptions(evidence_root=Path(evidence_root)))
             summary["verification_replay"] = json.loads(verification.model_dump_json())

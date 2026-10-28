@@ -37,6 +37,14 @@ def live_b():
     live.stop()
 
 
+@pytest.fixture
+def sessions(browser):
+    """The Session port, backed by a real browser. Swap this for a fake and the runners don't notice."""
+    from cua.surface.web.session import WebSessions
+
+    return WebSessions(browser)
+
+
 @pytest.fixture(scope="session")
 def browser():
     from playwright.sync_api import sync_playwright

@@ -67,11 +67,11 @@ def test_capabilities_are_findable_by_id_version_or_tool_name(book):
 
 
 @pytest.mark.browser
-def test_an_agent_picks_a_capability_and_gets_a_typed_answer(book, browser, live_a, tmp_path):
+def test_an_agent_picks_a_capability_and_gets_a_typed_answer(sessions, book, live_a, tmp_path):
     live_a.faults.clear()
     tenant = TenantConfig(tenant_id="cu_test", display_name="Test", app="cu_teller", base_url=live_a.base_url)
     app = Workspace(ROOT / "config").app("cu_teller")
-    engine = ReplayEngine(browser, SECRETS)
+    engine = ReplayEngine(sessions, SECRETS)
 
     def invoke(entry, arguments):
         return engine.run(entry.capability, tenant, app, arguments,
@@ -88,11 +88,11 @@ def test_an_agent_picks_a_capability_and_gets_a_typed_answer(book, browser, live
 
 
 @pytest.mark.browser
-def test_a_business_outcome_reaches_the_agent_as_an_answer(book, browser, live_a, tmp_path):
+def test_a_business_outcome_reaches_the_agent_as_an_answer(sessions, book, live_a, tmp_path):
     live_a.faults.clear()
     tenant = TenantConfig(tenant_id="cu_test", display_name="Test", app="cu_teller", base_url=live_a.base_url)
     app = Workspace(ROOT / "config").app("cu_teller")
-    engine = ReplayEngine(browser, SECRETS)
+    engine = ReplayEngine(sessions, SECRETS)
 
     def invoke(entry, arguments):
         return engine.run(entry.capability, tenant, app, arguments, ReplayOptions(evidence_root=tmp_path))

@@ -29,7 +29,7 @@ def capability(version: str) -> Capability:
 
 
 @pytest.fixture
-def approved_run(browser, live_a, tmp_path):
+def approved_run(sessions, live_a, tmp_path):
     workspace = Workspace(ROOT / "config")
     app = workspace.app("cu_teller")
     tenant = TenantConfig(tenant_id="cu_test", display_name="Test", app="cu_teller", base_url=live_a.base_url)
@@ -38,7 +38,7 @@ def approved_run(browser, live_a, tmp_path):
         live_a.faults.clear()
         for name, value in faults.items():
             live_a.faults.set(name, value)
-        engine = ReplayEngine(browser, SECRETS, ScriptedOperator(ControlLease()))
+        engine = ReplayEngine(sessions, SECRETS, ScriptedOperator(ControlLease()))
         result = engine.run(capability(version), tenant, app, SHARE_INPUTS,
                             ReplayOptions(attended=True, evidence_root=tmp_path))
         live_a.faults.clear()
@@ -78,7 +78,7 @@ def test_a_guard_resolves_the_ambiguous_write_instead_of_retrying(approved_run, 
     assert shares(live_a) == before + 1  # resolved, not re-posted
 
 
-def test_a_guard_prevents_a_second_posting_when_the_work_is_already_done(approved_run, live_a, browser, tmp_path):
+def test_a_guard_prevents_a_second_posting_when_the_work_is_already_done(sessions, approved_run, live_a, tmp_path):
     """If the confirmation is already on screen, the commit is skipped rather than dispatched again."""
     result = approved_run("1.1.0")
     assert result.status == "success"
@@ -86,7 +86,7 @@ def test_a_guard_prevents_a_second_posting_when_the_work_is_already_done(approve
 
     # Re-run from the confirmation screen: the guard's evidence already holds.
     workspace = Workspace(ROOT / "config")
-    engine = ReplayEngine(browser, SECRETS, ScriptedOperator(ControlLease()))
+    engine = ReplayEngine(sessions, SECRETS, ScriptedOperator(ControlLease()))
     tenant = TenantConfig(tenant_id="cu_test", display_name="Test", app="cu_teller", base_url=live_a.base_url)
     second = engine.run(capability("1.1.0"), tenant, workspace.app("cu_teller"), SHARE_INPUTS,
                         ReplayOptions(attended=True, evidence_root=tmp_path / "second"))

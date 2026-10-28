@@ -21,6 +21,7 @@ from cua.schema.artifact import Capability
 from cua.schema.results import RunResult
 from cua.schema.targets import RoleName
 from cua.secrets import DictSecretStore
+from cua.surface.web.session import WebSessions
 from cua.surface.web.surface import find
 from cua.tenancy.overlay import Overlay
 
@@ -110,7 +111,7 @@ class Tour:
 
     def replay(self, name: str, capability: Capability, tenant: TenantConfig, inputs: dict[str, str],
                operator: ScriptedOperator | None = None, overlay: Overlay | None = None, **kw) -> RunResult:
-        engine = ReplayEngine(self.browser, self.secrets, operator)
+        engine = ReplayEngine(WebSessions(self.browser), self.secrets, operator)
         return engine.run(capability, tenant, self.app, inputs, self.options(name, **kw), overlay=overlay)
 
 

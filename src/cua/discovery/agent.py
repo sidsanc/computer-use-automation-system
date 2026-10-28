@@ -17,16 +17,12 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
-from playwright.sync_api import Browser
-from playwright.sync_api import Error as PlaywrightError
-
 from cua.actions import ACTION_SPECS
 from cua.config import AppProfile, TenantConfig
 from cua.discovery.goal import GoalSpec
 from cua.discovery.llm import ModelClient, ToolCall
 from cua.discovery.recorder import RecordedAction, RecordingError, RunFacts, build_capability, next_version, save
 from cua.evidence.log import EvidenceLog
-from cua.handoff.capture import HumanCapture
 from cua.handoff.console import SessionOps
 from cua.handoff.control import ControlLease
 from cua.handoff.gate import HumanGate, InterventionRequest, ReasonCode, UnattendedGate
@@ -36,10 +32,18 @@ from cua.schema.artifact import Capability
 from cua.schema.base import render_template
 from cua.schema.conditions import Condition, ElementPresent, FrameUrl, InputRef, LiteralValue, SecretRef, Value
 from cua.schema.results import InvalidInputError, check_inputs
+from cua.schema.targets import render_target
 from cua.secrets import MissingSecretError, SecretStore
-from cua.surface.base import CONTAINER_ROLES, INTERACTIVE_ROLES, Observation, TargetingError
-from cua.surface.web.session import WebSession
-from cua.surface.web.surface import render_target
+from cua.surface.base import (
+    CONTAINER_ROLES,
+    INTERACTIVE_ROLES,
+    Capture,
+    Observation,
+    Session,
+    SessionFactory,
+    SurfaceError,
+    TargetingError,
+)
 
 PRECEDENCE = {"escalate": 0, "hard_failure": 1, "business_outcome": 2, "recoverable": 3}
 
@@ -112,7 +116,7 @@ class _Ctx:
     log: EvidenceLog
     redactor: Redactor
     options: DiscoveryOptions
-    session: WebSession | None = None
+    session: Session | None = None
     app_version: str | None = None
     obs: Observation | None = None
     actions: list[RecordedAction] = field(default_factory=list)
@@ -121,7 +125,7 @@ class _Ctx:
     served_models: set[str] = field(default_factory=set)
     turns: int = 0
     lease: ControlLease = field(default_factory=ControlLease)
-    capture: HumanCapture | None = None
+    capture: Capture | None = None
 
     @property
     def surface(self):
@@ -178,8 +182,9 @@ def prompt_template_hash(tools: list[dict]) -> str:
 
 
 class DiscoveryAgent:
-    def __init__(self, browser: Browser, model: ModelClient, secrets: SecretStore, gate: HumanGate | None = None):
-        self.browser = browser
+    def __init__(self, sessions: SessionFactory, model: ModelClient, secrets: SecretStore,
+                 gate: HumanGate | None = None):
+        self.sessions = sessions
         self.model = model
         self.secret_store = secrets
         self.gate = gate or UnattendedGate()
@@ -205,8 +210,8 @@ class DiscoveryAgent:
             for name in app.login.secrets:
                 ctx.secrets[name] = self.secret_store.get(name)
                 redactor.add_secret(ctx.secrets[name])
-            ctx.session = WebSession(self.browser, ctx.policy.allowed_origins,
-                                     video_dir=log.dir / "video" if options.video else None)
+            ctx.session = self.sessions(ctx.policy.allowed_origins,
+                                        video_dir=log.dir / "video" if options.video else None)
             self._wire_handoff(ctx)
             self._sign_on(ctx)
             entry_frames = self._enter(ctx)
@@ -219,7 +224,7 @@ class DiscoveryAgent:
                                      intervention_id=stop.intervention_id)
         except (InvalidInputError, MissingSecretError, RecordingError) as exc:
             result = DiscoveryResult(run_id, "failed", redactor.text(str(exc)), log.dir.as_posix(), ctx.turns)
-        except PlaywrightError as exc:
+        except SurfaceError as exc:
             log.event("browser_error", detail=str(exc).splitlines()[0])
             result = DiscoveryResult(run_id, "failed", f"browser error: {str(exc).splitlines()[0]}",
                                      log.dir.as_posix(), ctx.turns)
@@ -230,7 +235,7 @@ class DiscoveryAgent:
                     if video:
                         log.event("attachment", name=video.relative_to(log.dir).as_posix(),
                                   masking="none: video cannot be masked; only fake data is used")
-                except PlaywrightError:
+                except SurfaceError:
                     pass
         result.usage = dict(ctx.usage)
         log.event("discovery_finished", status=result.status, reason=result.reason, turns=ctx.turns,
@@ -246,21 +251,20 @@ class DiscoveryAgent:
         ctx.surface.lease = ctx.lease
         if not hasattr(self.gate, "attach"):
             return
-        ctx.capture = HumanCapture(ctx.session.context, ctx.lease, lambda action, holder: ctx.log.event(
+        ctx.capture = ctx.session.install_capture(ctx.lease, lambda action, holder: ctx.log.event(
             "human_action" if holder == "human" else "input_while_automation_held_control",
-            kind=action.kind, control=action.control, value=action.value, frame=action.frame_path), ctx.surface)
-        page = ctx.session.page
+            kind=action.kind, control=action.control, value=action.value, frame=action.frame_path))
 
         def screenshot() -> bytes | None:
             try:
                 png, _ = ctx.surface.screenshot_masked(list(ctx.app.sensitive_captions), ctx.pii_values(),
                                                        columns=list(ctx.app.sensitive_columns))
                 return png
-            except PlaywrightError:
+            except SurfaceError:
                 return None
 
-        self.gate.attach(SessionOps(pump=lambda ms: page.wait_for_timeout(ms), screenshot=screenshot,
-                                    announce=lambda: ctx.capture.announce(page), capture=ctx.capture,
+        self.gate.attach(SessionOps(pump=ctx.session.idle, screenshot=screenshot,
+                                    announce=ctx.session.announce, capture=ctx.capture,
                                     surface=ctx.surface), ctx.log)
 
     def _sign_on(self, ctx: _Ctx) -> None:
@@ -279,7 +283,7 @@ class DiscoveryAgent:
     def _enter(self, ctx: _Ctx) -> dict[str, str]:
         self._goto(ctx, ctx.goal.entry)
         ctx.surface.settle()
-        page_text = " ".join(self._frame_texts(ctx))
+        page_text = " ".join(ctx.session.texts())
         fingerprint = ctx.app.fingerprint
         if fingerprint:
             match = re.search(fingerprint.text_regex, page_text)
@@ -291,17 +295,9 @@ class DiscoveryAgent:
         url = ctx.tenant.base + path
         if not url_allowed(ctx.policy, url):
             raise _Stop("policy_blocked", f"route {path} is outside the allowlist")
-        ctx.session.page.goto(url, wait_until="load")
+        ctx.session.open(url)
         ctx.log.event("navigated", path=path)
 
-    def _frame_texts(self, ctx: _Ctx) -> list[str]:
-        texts = []
-        for frame in ctx.session.page.frames:
-            try:
-                texts.append(frame.evaluate("() => document.body ? document.body.innerText : ''"))
-            except PlaywrightError:
-                continue
-        return texts
 
     # ---- the loop ------------------------------------------------------------------------------------
 
@@ -447,7 +443,7 @@ class DiscoveryAgent:
             text = ctx.surface.perform(name, fresh.handle, ctx.value_of(value) if value else None, key)
         except TargetingError as exc:
             return f"The element could not be found again before acting: {exc}", True, False
-        except PlaywrightError as exc:
+        except SurfaceError as exc:
             return f"The action failed: {str(exc).splitlines()[0]}", True, False
 
         recorded = RecordedAction(kind=name, intent=intent, target=target, risk=decision.risk, value=value, key=key,
@@ -535,7 +531,7 @@ class DiscoveryAgent:
                     info = ctx.surface.action_info(handle, "click")
                     self._decide(ctx, "click", info, None, intent=f"Dismiss {handler.code}")
                     ctx.surface.perform("click", handle)
-                except (TargetingError, PlaywrightError):
+                except (TargetingError, SurfaceError):
                     break
                 ctx.log.event("recovery_applied", code=handler.code)
                 notes.append(f"[system] Known state '{handler.code}' was handled automatically.")
@@ -554,7 +550,7 @@ class DiscoveryAgent:
                                                        columns=list(ctx.app.sensitive_columns))
             shot = ctx.log.relative(ctx.log.attach_masked_bytes(f"interventions/{intervention_id}.png", png,
                                                                 masking=f"blackout:{masked}"))
-        except PlaywrightError:
+        except SurfaceError:
             pass
         request = InterventionRequest(
             intervention_id=intervention_id, run_id=ctx.run_id, mode="discovery", capability_id=ctx.goal.capability_id,
@@ -580,8 +576,7 @@ class DiscoveryAgent:
                 risk="read", performed_by="human"))
             ctx.log.event("human_step_recorded", reason=reason, actions=summary)
             ctx.lease.to("automation", "automation", note="discovery resumed")
-            if ctx.capture is not None:
-                ctx.capture.announce(ctx.session.page)
+            ctx.session.announce()
 
     # ---- recording -----------------------------------------------------------------------------------
 
@@ -608,15 +603,15 @@ class DiscoveryAgent:
         while True:
             try:
                 return ctx.surface.resolve(render_target(target, ctx.render)).handle
-            except (TargetingError, PlaywrightError) as exc:
+            except (TargetingError, SurfaceError) as exc:
                 if time.monotonic() > deadline:
                     raise _Stop("failed", f"sign-on control not found: {exc}") from None
-            ctx.session.page.wait_for_timeout(200)
+            ctx.session.idle(200)
 
     def _wait_conditions(self, ctx: _Ctx, conditions, timeout_s: float) -> bool:
         deadline = time.monotonic() + timeout_s
         while time.monotonic() < deadline:
             if all(ctx.surface.check(c, ctx.render, ctx.value_of) for c in conditions):
                 return True
-            ctx.session.page.wait_for_timeout(200)
+            ctx.session.idle(200)
         return False

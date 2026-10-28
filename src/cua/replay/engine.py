@@ -21,12 +21,9 @@ from typing import Any
 
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import InvalidVersion, Version
-from playwright.sync_api import Browser
-from playwright.sync_api import Error as PlaywrightError
 
 from cua.config import AppProfile, TenantConfig
 from cua.evidence.log import EvidenceLog
-from cua.handoff.capture import HumanCapture
 from cua.handoff.console import SessionOps
 from cua.handoff.control import ControlLease
 from cua.handoff.gate import HumanGate, HumanResolution, InterventionRequest, ReasonCode, UnattendedGate
@@ -48,10 +45,17 @@ from cua.schema.results import (
     SideEffects,
     validate_inputs,
 )
+from cua.schema.targets import render_target
 from cua.secrets import MissingSecretError, SecretStore
-from cua.surface.base import AmbiguousLocatorError, TargetingError
-from cua.surface.web.session import WebSession
-from cua.surface.web.surface import ActionInfo, render_target
+from cua.surface.base import (
+    ActionInfo,
+    AmbiguousLocatorError,
+    Capture,
+    Session,
+    SessionFactory,
+    SurfaceError,
+    TargetingError,
+)
 from cua.tenancy.overlay import Overlay
 from cua.tenancy.overlay import apply as apply_overlay
 
@@ -104,7 +108,7 @@ class _Run:
     t0: float
     inputs: dict[str, str] = field(default_factory=dict)
     secrets: dict[str, str] = field(default_factory=dict)
-    session: WebSession | None = None
+    session: Session | None = None
     app_version: str | None = None
     outputs: dict[str, Any] = field(default_factory=dict)
     ranks: dict[str, int] = field(default_factory=dict)
@@ -113,7 +117,7 @@ class _Run:
     committed: list[CommittedEffect] = field(default_factory=list)
     possible: list[str] = field(default_factory=list)
     lease: ControlLease = field(default_factory=ControlLease)
-    capture: HumanCapture | None = None
+    capture: Capture | None = None
     current_index: int = 0
     overlay_id: str | None = None
 
@@ -146,8 +150,8 @@ def capability_hash(capability: Capability) -> str:
 
 
 class ReplayEngine:
-    def __init__(self, browser: Browser, secrets: SecretStore, gate: HumanGate | None = None) -> None:
-        self.browser = browser
+    def __init__(self, sessions: SessionFactory, secrets: SecretStore, gate: HumanGate | None = None) -> None:
+        self.sessions = sessions
         self.secret_store = secrets
         self.gate = gate or UnattendedGate()
 
@@ -191,7 +195,7 @@ class ReplayEngine:
                 run.secrets[name] = self.secret_store.get(name)
                 redactor.add_secret(run.secrets[name])
             video_dir = log.dir / "video" if options.video else None
-            run.session = WebSession(self.browser, run.policy.allowed_origins, video_dir=video_dir, trace=options.trace)
+            run.session = self.sessions(run.policy.allowed_origins, video_dir=video_dir, trace=options.trace)
             self._wire_handoff(run)
             self._execute(run)
             missing = [name for name in capability.outputs if name not in run.outputs]
@@ -208,7 +212,7 @@ class ReplayEngine:
         except MissingSecretError as exc:
             result = self._result(run, "failure", failure=Failure(
                 category="internal_error", step_id=None, expected="configured secrets", observed=str(exc)))
-        except PlaywrightError as exc:
+        except SurfaceError as exc:
             result = self._result(run, "failure", failure=self._failure(
                 run, "internal_error", None, "browser automation to keep working", str(exc).splitlines()[0]))
         finally:
@@ -225,21 +229,20 @@ class ReplayEngine:
         run.surface.lease = run.lease
         if not hasattr(self.gate, "attach"):
             return
-        run.capture = HumanCapture(run.session.context, run.lease, lambda action, holder: run.log.event(
+        run.capture = run.session.install_capture(run.lease, lambda action, holder: run.log.event(
             "human_action" if holder == "human" else "input_while_automation_held_control",
-            kind=action.kind, control=action.control, value=action.value, frame=action.frame_path), run.surface)
-        page = run.session.page
+            kind=action.kind, control=action.control, value=action.value, frame=action.frame_path))
 
         def screenshot() -> bytes | None:
             try:
                 png, _ = run.surface.screenshot_masked(list(run.app.sensitive_captions), run.pii_values(),
                                                        columns=list(run.app.sensitive_columns))
                 return png
-            except PlaywrightError:
+            except SurfaceError:
                 return None
 
-        self.gate.attach(SessionOps(pump=lambda ms: page.wait_for_timeout(ms), screenshot=screenshot,
-                                    announce=lambda: run.capture.announce(page), capture=run.capture,
+        self.gate.attach(SessionOps(pump=run.session.idle, screenshot=screenshot,
+                                    announce=run.session.announce, capture=run.capture,
                                     surface=run.surface), run.log)
 
     def _close(self, run: _Run, keep_trace: bool) -> None:
@@ -250,7 +253,7 @@ class ReplayEngine:
         trace_path = run.log.dir / "trace.zip" if run.options.trace and keep_trace else None
         try:
             video = run.session.close(trace_path=trace_path)
-        except PlaywrightError:
+        except SurfaceError:
             return
         if video:
             run.log.event("attachment", name=video.relative_to(run.log.dir).as_posix(),
@@ -272,8 +275,7 @@ class ReplayEngine:
                     except _ResumeAt as resume:
                         run.current_index = resume.index
                         run.lease.to("automation", "automation", note="resume verified against the live screen")
-                        if run.capture is not None:
-                            run.capture.announce(run.session.page)
+                        run.session.announce()
                         run.log.event("resumed_after_human", step_index=resume.index,
                                       step_id=steps[resume.index].id if resume.index < len(steps) else None)
                         continue
@@ -305,7 +307,7 @@ class ReplayEngine:
         if not url_allowed(run.policy, url):
             raise _Terminal("policy_blocked", policy=PolicyDecision(
                 rule="location_not_allowed", step_id=None, reason=f"entry route {path} is outside the allowlist"))
-        run.session.page.goto(url, wait_until="load")
+        run.session.open(url)
         run.log.event("navigated", path=path)
 
     def _check_version(self, run: _Run) -> None:
@@ -314,19 +316,14 @@ class ReplayEngine:
             return
         deadline = time.monotonic() + 5
         while time.monotonic() < deadline:
-            frames = run.session.page.frames
-            for frame in frames:
-                try:
-                    text = frame.evaluate("() => document.body ? document.body.innerText : ''")
-                    match = re.search(fp.text_regex, text)
-                except PlaywrightError:
-                    continue
+            for text in run.session.texts():
+                match = re.search(fp.text_regex, text)
                 if match:
                     run.app_version = match.group(1)
                     break
             if run.app_version:
                 break
-            run.session.page.wait_for_timeout(POLL_MS)
+            run.session.idle(POLL_MS)
         run.log.event("app_fingerprint", version=run.app_version, required=run.capability.app.versions)
         if run.app_version is None:
             return
@@ -346,11 +343,19 @@ class ReplayEngine:
         log.event("step_started", step_id=step.id, intent=step.intent, action=step.action.kind)
         self._await(run, step, handlers, step.pre, time.monotonic() + step.timeout_s, phase="pre")
 
+        if step.effect == "write" and step.idempotency and self._already_done(run, step):
+            # Evidence says this write landed. Dispatching again would post it twice, and the
+            # control may no longer exist, so skip before resolving anything.
+            log.event("write_skipped_already_done", step_id=step.id)
+            run.committed.append(CommittedEffect(step_id=step.id, actor="automation"))
+            log.event("step_completed", step_id=step.id)
+            return
+
         if step.action.kind == "request_human":
             self._ask_human(run, step, "agent_requested", step.action.reason, ("take_control", "abort"))
             return
 
-        handle, info = None, ActionInfo(location_url=run.session.page.url, control_name=None,
+        handle, info = None, ActionInfo(location_url=run.session.location(), control_name=None,
                                         destination_url=None, destination_method=None)
         if step.target is not None:
             handle, rank = self._resolve(run, step, handlers)
@@ -368,13 +373,6 @@ class ReplayEngine:
         if decision.risk == "irreversible" and not step.irreversible:
             log.event("risk_upgraded", step_id=step.id, declared=step.effect, policy=decision.risk)
 
-        if writes and step.idempotency and self._already_done(run, step):
-            # The work is already on the screen: dispatching again would post it twice.
-            log.event("write_skipped_already_done", step_id=step.id)
-            run.committed.append(CommittedEffect(step_id=step.id, actor="automation"))
-            log.event("step_completed", step_id=step.id)
-            return
-
         if writes:
             run.possible.append(step.id)
         value = None
@@ -384,7 +382,7 @@ class ReplayEngine:
             value = run.value_of(step.action.option)
         try:
             text = surface.perform(step.action.kind, handle, value, getattr(step.action, "key", None), step.timeout_s)
-        except PlaywrightError as exc:
+        except SurfaceError as exc:
             self._react(run, step, handlers, phase="act")
             raise _Terminal("failure", failure=self._failure(
                 run, "unexpected_state", step.id, f"'{step.action.kind}' to succeed on {step.intent!r}",
@@ -430,7 +428,7 @@ class ReplayEngine:
                 return True
             if time.monotonic() >= deadline:
                 return False
-            run.session.page.wait_for_timeout(POLL_MS)
+            run.session.idle(POLL_MS)
 
     def _gate(self, run: _Run, step: Step | None, kind: str, info: ActionInfo) -> Decision:
         step_id = step.id if step else None
@@ -469,7 +467,7 @@ class ReplayEngine:
             except AmbiguousLocatorError as exc:
                 raise _Terminal("failure", failure=self._failure(
                     run, "ambiguous_locator", step.id, "exactly one matching element", str(exc))) from None
-            except (TargetingError, PlaywrightError) as exc:
+            except (TargetingError, SurfaceError) as exc:
                 last = exc
             if self._react(run, step, handlers, phase="pre"):
                 deadline = time.monotonic() + step.timeout_s
@@ -478,7 +476,7 @@ class ReplayEngine:
                 expected = "; ".join(json.dumps(c.locator.model_dump()) for c in target.locators)
                 raise _Terminal("failure", failure=self._failure(
                     run, "locator_not_found", step.id, expected, str(last).splitlines()[0]))
-            run.session.page.wait_for_timeout(POLL_MS)
+            run.session.idle(POLL_MS)
 
     def _await(self, run: _Run, step: Step | None, handlers: list[Handler], conditions: tuple[Condition, ...],
                deadline: float, phase: str) -> None:
@@ -494,7 +492,7 @@ class ReplayEngine:
                 expected = "; ".join(json.dumps(c.model_dump(mode="json", exclude_defaults=True)) for c in conditions)
                 raise _Terminal("failure", failure=self._failure(
                     run, category, step.id if step else None, run.render(expected), self._observed(run)))
-            run.session.page.wait_for_timeout(POLL_MS)
+            run.session.idle(POLL_MS)
 
     # ---- handlers ----------------------------------------------------------------------------------
 
@@ -610,12 +608,12 @@ class ReplayEngine:
             png, masked = run.surface.screenshot_masked(list(run.app.sensitive_captions), run.pii_values(),
                                                        columns=list(run.app.sensitive_columns))
             shot = run.log.relative(run.log.attach_masked_bytes(f"{prefix}.png", png, masking=f"blackout:{masked}"))
-        except PlaywrightError:
+        except SurfaceError:
             pass
         try:
             observed = run.redactor.observation(run.surface.observe())
             obs = run.log.relative(run.log.write_json(f"{prefix}-observation.json", observed))
-        except (PlaywrightError, TargetingError):
+        except (SurfaceError, TargetingError):
             pass
         return shot, obs
 
@@ -632,8 +630,8 @@ class ReplayEngine:
     def _observed(self, run: _Run) -> str:
         try:
             return json.dumps({"frames": run.surface.frame_urls(), "dialogs": [n for _, n in run.surface.dialogs()],
-                               "title": run.session.page.title()})
-        except PlaywrightError as exc:
+                               "title": run.session.title()})
+        except SurfaceError as exc:
             return str(exc).splitlines()[0]
 
     @staticmethod

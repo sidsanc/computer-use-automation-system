@@ -76,10 +76,10 @@ def setup(browser, live_a, tmp_path):
     return browser, workspace.app("cu_teller"), tenant, goal, options, tmp_path
 
 
-def test_discovery_records_a_parameterized_capability_that_replays_for_other_members(setup):
+def test_discovery_records_a_parameterized_capability_that_replays_for_other_members(sessions, setup):
     browser, app, tenant, goal, options, tmp_path = setup
     model = ScriptedModel(HAPPY_PATH)
-    result = DiscoveryAgent(browser, model, SECRETS).run(goal, tenant, app, {"member_number": "100234"}, options)
+    result = DiscoveryAgent(sessions, model, SECRETS).run(goal, tenant, app, {"member_number": "100234"}, options)
     assert result.status == "recorded", result.reason
     cap = result.capability
 
@@ -94,7 +94,7 @@ def test_discovery_records_a_parameterized_capability_that_replays_for_other_mem
     observations = "\n".join(model.seen)
     assert "100234" not in observations and "AVERY" not in observations
 
-    engine = ReplayEngine(browser, SECRETS)
+    engine = ReplayEngine(sessions, SECRETS)
     replay_options = ReplayOptions(evidence_root=tmp_path / "replays")
     other = engine.run(cap, tenant, app, {"member_number": "100871"}, replay_options)
     assert other.status == "success", other.failure
@@ -103,7 +103,7 @@ def test_discovery_records_a_parameterized_capability_that_replays_for_other_mem
     assert (missing.status, missing.outcome.code) == ("business_outcome", "member_not_found")
 
 
-def test_literal_input_values_are_refused(setup):
+def test_literal_input_values_are_refused(sessions, setup):
     browser, app, tenant, goal, options, _ = setup
     moves = [
         ("click", r'(e\d+) link "Member Inquiry"', {"intent": "Open Member Inquiry"}),
@@ -111,12 +111,12 @@ def test_literal_input_values_are_refused(setup):
         ("request_human", None, {"reason": "stuck"}),
     ]
     model = ScriptedModel(moves)
-    result = DiscoveryAgent(browser, model, SECRETS).run(goal, tenant, app, {"member_number": "100234"}, options)
+    result = DiscoveryAgent(sessions, model, SECRETS).run(goal, tenant, app, {"member_number": "100234"}, options)
     assert "reference the input instead" in model.seen[2]
     assert result.status == "needs_human"
 
 
-def test_finish_requires_every_output(setup):
+def test_finish_requires_every_output(sessions, setup):
     browser, app, tenant, goal, options, _ = setup
     moves = [
         ("click", r'(e\d+) link "Member Inquiry"', {"intent": "Open Member Inquiry"}),
@@ -124,7 +124,7 @@ def test_finish_requires_every_output(setup):
         ("request_human", None, {"reason": "cannot find balance"}),
     ]
     model = ScriptedModel(moves)
-    result = DiscoveryAgent(browser, model, SECRETS).run(goal, tenant, app, {"member_number": "100234"}, options)
+    result = DiscoveryAgent(sessions, model, SECRETS).run(goal, tenant, app, {"member_number": "100234"}, options)
     assert "outputs not extracted" in model.seen[2]
     assert result.status == "needs_human"
     events = [json.loads(line) for line in (Path(result.evidence_dir) / "events.jsonl").read_text().splitlines()]

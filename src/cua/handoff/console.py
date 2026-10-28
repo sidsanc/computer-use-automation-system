@@ -18,9 +18,9 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 
 from cua.evidence.log import EvidenceLog
-from cua.handoff.capture import HumanCapture
 from cua.handoff.control import ControlLease
 from cua.handoff.gate import HumanResolution, InterventionRequest
+from cua.surface.base import Capture
 
 DecisionKind = Literal["take_control", "hand_back", "approve", "deny", "abort"]
 
@@ -32,7 +32,7 @@ class SessionOps:
     pump: Callable[[int], None]
     screenshot: Callable[[], bytes | None]
     announce: Callable[[], None]
-    capture: HumanCapture | None = None
+    capture: Capture | None = None
     surface: object | None = None  # for programmatic operators (test doubles, scripted runbooks)
 
 

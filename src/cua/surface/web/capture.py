@@ -9,7 +9,7 @@ from playwright.sync_api import Error as PlaywrightError
 from cua.handoff.control import ControlLease
 from cua.handoff.gate import HumanAction
 
-_SCRIPT = files("cua.handoff").joinpath("capture.js").read_text(encoding="utf-8")
+_SCRIPT = files("cua.surface.web").joinpath("capture.js").read_text(encoding="utf-8")
 
 
 class HumanCapture:

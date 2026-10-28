@@ -49,12 +49,12 @@ def test_overlay_is_checked_against_product_and_steps():
 
 
 @pytest.mark.browser
-def test_one_capability_serves_both_tenants(browser, live_a, live_b, beta_overlay, tmp_path):
+def test_one_capability_serves_both_tenants(sessions, browser, live_a, live_b, beta_overlay, tmp_path):
     live_a.faults.clear()
     live_b.faults.clear()
     app = Workspace(ROOT / "config").app("cu_teller")
     capability = balance_lookup()
-    engine = ReplayEngine(browser, SECRETS)
+    engine = ReplayEngine(sessions, SECRETS)
     options = ReplayOptions(evidence_root=tmp_path)
 
     alpha = TenantConfig(tenant_id="cu_alpha", display_name="Alpha", app="cu_teller", base_url=live_a.base_url)

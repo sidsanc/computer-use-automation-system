@@ -143,14 +143,14 @@ pytestmark_browser = pytest.mark.browser
 
 
 @pytest.mark.browser
-def test_operator_takes_the_live_session_and_replay_resumes(browser, live_a, tmp_path):
+def test_operator_takes_the_live_session_and_replay_resumes(sessions, live_a, tmp_path):
     live_a.faults.clear()
     live_a.faults.set("unknown_dialog")
     app = Workspace(ROOT / "config").app("cu_teller")
     tenant = TenantConfig(tenant_id="cu_test", display_name="Test", app="cu_teller", base_url=live_a.base_url)
     lease = ControlLease()
     operator = ScriptedOperator(lease, work=acknowledge_dialog)
-    engine = ReplayEngine(browser, SECRETS, operator)
+    engine = ReplayEngine(sessions, SECRETS, operator)
 
     result = engine.run(balance_lookup(), tenant, app, {"member_number": "100234"},
                         ReplayOptions(attended=True, evidence_root=tmp_path))
@@ -172,7 +172,7 @@ def test_operator_takes_the_live_session_and_replay_resumes(browser, live_a, tmp
 
 
 @pytest.mark.browser
-def test_automation_cannot_act_while_a_human_holds_control(browser, live_a, tmp_path):
+def test_automation_cannot_act_while_a_human_holds_control(sessions, live_a, tmp_path):
     live_a.faults.clear()
     live_a.faults.set("unknown_dialog")
     app = Workspace(ROOT / "config").app("cu_teller")
@@ -187,7 +187,7 @@ def test_automation_cannot_act_while_a_human_holds_control(browser, live_a, tmp_
             refused.append(str(exc))
         acknowledge_dialog(surface)
 
-    engine = ReplayEngine(browser, SECRETS, ScriptedOperator(lease, work=automation_tries_to_act))
+    engine = ReplayEngine(sessions, SECRETS, ScriptedOperator(lease, work=automation_tries_to_act))
     result = engine.run(balance_lookup(), tenant, app, {"member_number": "100234"},
                         ReplayOptions(attended=True, evidence_root=tmp_path))
     assert result.status == "success", result.failure
@@ -195,7 +195,7 @@ def test_automation_cannot_act_while_a_human_holds_control(browser, live_a, tmp_
 
 
 @pytest.mark.browser
-def test_discovery_records_a_human_step_when_the_operator_takes_over(browser, live_a, tmp_path):
+def test_discovery_records_a_human_step_when_the_operator_takes_over(sessions, live_a, tmp_path):
     live_a.faults.clear()
     workspace = Workspace(ROOT / "config")
     app = workspace.app("cu_teller")
@@ -210,7 +210,7 @@ def test_discovery_records_a_human_step_when_the_operator_takes_over(browser, li
         ("finish", None, {"summary": "done"}),
     ]
     lease = ControlLease()
-    agent = DiscoveryAgent(browser, ScriptedModel(moves), SECRETS, ScriptedOperator(lease))
+    agent = DiscoveryAgent(sessions, ScriptedModel(moves), SECRETS, ScriptedOperator(lease))
     options = DiscoveryOptions(evidence_root=tmp_path / "runs", capabilities_root=tmp_path / "capabilities")
     result = agent.run(goal, tenant, app, {"member_number": "100234"}, options)
 

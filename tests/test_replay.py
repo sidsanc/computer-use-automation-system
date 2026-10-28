@@ -19,9 +19,9 @@ def app_profile():
 
 
 @pytest.fixture
-def replay(browser, live_a, app_profile, tmp_path):
+def replay(sessions, live_a, app_profile, tmp_path):
     live_a.faults.clear()
-    engine = ReplayEngine(browser, DictSecretStore({"teller_username": CREDS[0], "teller_password": CREDS[1]}))
+    engine = ReplayEngine(sessions, DictSecretStore({"teller_username": CREDS[0], "teller_password": CREDS[1]}))
 
     def run(member_number: str, live=live_a, **options):
         tenant = TenantConfig(tenant_id="cu_test", display_name="Test", app="cu_teller", base_url=live.base_url)

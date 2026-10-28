@@ -28,6 +28,7 @@ from cua.schema.targets import (
     TableCell,
     Target,
     Text,
+    render_target,
 )
 from cua.surface.base import (
     CELL_ROLES,
@@ -40,6 +41,7 @@ from cua.surface.base import (
     Observation,
     Resolution,
     StaleElementError,
+    SurfaceError,
     TableContext,
     TargetingError,
 )
@@ -254,6 +256,13 @@ class WebSurface:
 
     def perform(self, kind: str, handle: ElementHandle | None, value: str | None = None, key: str | None = None,
                 timeout_s: float = 10, actor: str = "automation") -> str | None:
+        try:
+            return self._perform(kind, handle, value, key, timeout_s, actor)
+        except PlaywrightError as exc:  # the runners catch SurfaceError, never a driver's type
+            raise SurfaceError(str(exc).splitlines()[0]) from exc
+
+    def _perform(self, kind: str, handle: ElementHandle | None, value: str | None = None, key: str | None = None,
+                 timeout_s: float = 10, actor: str = "automation") -> str | None:
         if self.lease is not None:
             self.lease.require(actor)  # nobody acts on the session without holding control
         self.last_action = (kind, time.monotonic())
@@ -365,11 +374,7 @@ def _rendered(locator: Locator, render: Callable[[str], str]) -> Locator:
     return type(locator).model_validate(rendered)
 
 
-def render_target(target: Target, render: Callable[[str], str]) -> Target:
-    """Substitute ``{{inputs.x}}`` in every locator of a target."""
-    return target.model_copy(update={
-        "locators": tuple(c.model_copy(update={"locator": _rendered(c.locator, render)}) for c in target.locators)
-    })
+
 
 
 def _proposals(node: AXNode, handle: ElementHandle) -> list[tuple[Locator, str]]:
